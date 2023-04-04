@@ -4,11 +4,8 @@
              @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
 
       <div class="navbar-container">
-        <el-menu-item index="/admin/">用户（权限）管理</el-menu-item>
-        <el-menu-item index="/admin/groupManagement">课题组管理</el-menu-item>
-
-        <el-menu-item index="/admin/">经费管理</el-menu-item>
-        <el-menu-item index="/admin/applicationManagement">报销申请管理</el-menu-item>
+        <el-menu-item index="/user/application">报销申请</el-menu-item>
+        <el-menu-item index="/user/application">课题组经费使用情况</el-menu-item>
 
         <el-menu-item index="/admin/">
           <template v-slot:title>

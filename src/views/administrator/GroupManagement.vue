@@ -19,7 +19,7 @@
           <span>负责人{{ info.professor }}</span>
         </div>
 
-        <div style="flex-basis: 30%">
+        <div style="flex-basis: 35%">
           <div ref="chartDom" :id="'chart_' + index" style="height: 200px;"></div>
         </div>
 
@@ -48,27 +48,27 @@ export default {
           title: "A",
           professor: "123",
           chartData: [
-            {name: 'A', value: 100},
-            {name: 'B', value: 200},
-            {name: 'C', value: 300},
+            {name: '国自然', value: 100},
+            {name: '中央财政支持', value: 200},
+            {name: '高水平', value: 300},
           ],
         },
         {
           title: "B",
           professor: "456",
           chartData: [
-            {name: 'A', value: 100},
-            {name: 'B', value: 400},
-            {name: 'C', value: 500},
+            {name: '国自然', value: 100},
+            {name: '中央财政支持', value: 400},
+            {name: '高水平', value: 500},
           ],
         },
         {
           title: "C",
           professor: "789",
           chartData: [
-            {name: 'A', value: 100},
-            {name: 'B', value: 200},
-            {name: 'C', value: 300},
+            {name: '国自然', value:600},
+            {name: '中央财政支持', value: 100},
+            {name: '高水平', value: 800},
           ],
         },
       ],

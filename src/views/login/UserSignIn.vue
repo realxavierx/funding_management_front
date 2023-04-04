@@ -3,14 +3,14 @@
   <div class="userSignIn">
     <div class="background">
       <div class="change">
-        <span class="already">New to Hotel?</span>
+        <span class="already">New to funding?</span>
         <router-link to="/userLogin/UserSignUp">
           <el-button round>Creat an account</el-button>
         </router-link>
       </div>
 
       <div class="image">
-        <img :src="require('@/assets/dz.png')" alt="dz">
+        <img :src="require('@/assets/team.png')" alt="dz">
       </div>
 
       <div class="login_container">
@@ -152,7 +152,7 @@ export default {
 }
 
 .image {
-  margin-left: 10%;
+  margin-left:5%;
 }
 
 .in {

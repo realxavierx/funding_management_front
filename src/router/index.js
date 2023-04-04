@@ -7,6 +7,9 @@ import UserSignUp from '@/views/login/UserSignUp.vue'
 import ResetPassword from '@/views/login/ResetPassword.vue'
 import AdminHome from "@/views/administrator/AdminHome";
 import GroupManagement from "@/views/administrator/GroupManagement";
+import Application from "@/views/user/Application";
+import UserHome from "@/views/user/UserHome";
+import ApplicationManagement from "@/views/administrator/ApplicationManagement";
 
 const routes = [
     {
@@ -43,7 +46,6 @@ const routes = [
         component: ResetPassword
     },
     {
-        // 忘记密码
         path: '/admin',
         name: 'adminHome',
         component: AdminHome,
@@ -51,6 +53,21 @@ const routes = [
             path: 'groupManagement',
             name: 'groupManagement',
             component: GroupManagement,
+        }, {
+            path: 'applicationManagement',
+            name: 'applicationManagement',
+            component: ApplicationManagement
+        }
+        ]
+    },
+    {
+        path: '/user',
+        name: 'userHome',
+        component: UserHome,
+        children: [{
+            path: 'application',
+            name: 'application',
+            component: Application,
         }
         ]
     },
