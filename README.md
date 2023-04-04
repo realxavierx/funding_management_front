@@ -5,8 +5,8 @@
 vue ui 中安装了element-plus
 npm install axios --legacy-peer-deps
 npm install vue-particles --save --legacy-peer-deps
+npm install echarts --legacy-peer-deps
 ```
-
 ### Compiles and hot-reloads for development
 ```
 npm run serve
