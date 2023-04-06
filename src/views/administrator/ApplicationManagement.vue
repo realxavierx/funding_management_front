@@ -10,16 +10,17 @@
   </div>
 
   <div class="applicationTable">
-    <el-table :data="tableData" border style="width: 100%"
+    <el-table :data="applicationData" border style="width: 100%"
               :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
               highlight-current-row>
-      <el-table-column align="center" fixed prop="group" label="课题组名称"></el-table-column>
-      <el-table-column align="center" prop="identity" label="经办人"></el-table-column>
-      <el-table-column align="center" prop="fundName" label="经费编号与经费名称"></el-table-column>
-      <el-table-column align="center" prop="money" label="支出金额"></el-table-column>
-      <el-table-column align="center" prop="category" label="支出类别"></el-table-column>
-      <el-table-column prop="abstract" label="内容摘要"></el-table-column>
-      <el-table-column prop="remarks" label="备注"></el-table-column>
+      <el-table-column align="center" fixed prop="id" label="序号"></el-table-column>
+      <el-table-column align="center" prop="group_name" label="课题组名称"></el-table-column>
+      <el-table-column align="center" prop="applicant_name" label="经办人"></el-table-column>
+      <el-table-column align="center" prop="fund_name" label="经费编号与经费名称"></el-table-column>
+      <el-table-column align="center" prop="expense" label="支出金额"></el-table-column>
+      <el-table-column align="center" prop="expense_category" label="支出类别"></el-table-column>
+      <el-table-column prop="summary" label="内容摘要"></el-table-column>
+      <el-table-column prop="note" label="备注"></el-table-column>
       <el-table-column align="center" prop="operation" label="操作" width="200px">
         <template #default="scope">
           <el-button type="success" round @click="handlePass(scope.$index, scope.row)">同意</el-button>
@@ -27,9 +28,10 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination v-model:page-size="pageSize" background @size-change="handleSizeChange"
-                   @current-change="handleCurrentChange" :current-page.sync="currentPage" :page-sizes="[2, 4, 6, 8]"
-                   layout="prev, pager, next, sizes, total, jumper" :total="total"/>
+    <el-pagination :page-size="pageSize" background @size-change="handleSizeChange"
+                   @current-change="handleCurrentChange" v-model:current-page="currentPage" :page-sizes="[5,10,15,20]"
+                   layout="prev, pager, next, sizes, total, jumper" :total="totalCount"/>
+
   </div>
   <div class="refuse">
     <el-dialog v-model="dialogVisibleRefuse" width="35%" close-on-press-escape>
@@ -43,54 +45,88 @@
 </template>
 
 <script>
+import {getApplications} from "@/apis/adminAPI";
+
 export default {
   name: "ApplicationManagement",
   data() {
     return {
       pageSize: 5,//每页显示的行数,默认为2
       currentPage: 1,
-      total: 10,//数据一共多少
+      totalCount: 0,//数据一共多少
       queryForm: {
         groupName: "",
       },
       dialogVisibleRefuse: false,
       groupName: "",
-      tableData: [
-        {
-          group: "A",
-          identity: "秘书",
-          fundName: "国自然",
-          money: "200",
-          category: "其他资本性支出/图书",
-          abstract: "",
-          remarks: "",
-        }
-      ],
+      applicationData: [],
     }
   },
   methods: {
+    getTotalCount() {
+      let _this = this
+      this.$api.adminAPI.getTotalCount()
+          .then((resp) => {
+            console.log("totalCount", resp)
+            _this.totalCount = resp.data.data.totalCount
+            _this.getApplications()
+          })
+    },
+
+    getApplications() {
+      let _this = this
+
+      _this.applicationData = []
+      let offset = (this.currentPage - 1) * this.pageSize
+      console.log(this.totalCount)
+      let limit = Math.min(this.totalCount - offset, this.pageSize)
+      this.$api.adminAPI.getApplications(limit, offset)
+          .then((resp) => {
+            for (const elem of resp.data.data.applications) {
+              console.log(elem)
+              let data = elem.application
+              data['applicant_id'] = elem.applicant.sid
+              data['applicant_name'] = elem.applicant.name
+              data['applicant_role'] = elem.applicant.role
+              _this.applicationData.push(data)
+            }
+          })
+    },
+
     handleRefusal(row) {
       this.dialogVisibleRefuse = true
       this.groupName = row.group
     },
+
     unRefuse() {
       this.dialogVisibleRefuse = false;//对话框不显示
     },
+
     confirmRefusal() {
 
     },
+
     handlePass() {
 
     },
+
     //用于表格分页的方法
     handleSizeChange(val) {
       this.pageSize = val;
+      this.currentPage = 1;
+      this.handleCurrentChange();//默认更改每页多少条后重新加载第一页
     },
 
     handleCurrentChange() {
-      this.currentPage = 2
+      console.log("current page", this.currentPage)
+      this.getApplications()
     },
-  }
+
+  },
+
+  mounted() {
+    this.getTotalCount()
+  },
 }
 </script>
 

@@ -10,7 +10,7 @@
       </div>
 
       <div class="image">
-        <img :src="require('@/assets/team.png')" alt="dz">
+        <img :src="require('@/assets/team.png')" :style="{ transform: `scale(0.8)` }">
       </div>
 
       <div class="login_container">
@@ -93,28 +93,16 @@ export default {
       this.$refs.loginFormRef.resetFields();
     },
     submitLoginForm() {
+      const _this = this
       this.$refs.loginFormRef.validate(async valid => {
         //1.验证失败则结束
         if (!valid) {
           return;
         } else {
-          this.$api.loginApi.userSignIn(this.loginForm.id, this.loginForm.password)
-              .then(res => {
-                console.log(res)
-                if (res.data.code == 8000) {
-                  this.$message({
-                    message: res.data.message,
-                    type: "error"
-                  });
-                } else {
-                  //保存token
-                  let accessToken = res.data[0].token;
-                  localStorage.setItem("token", accessToken)
-                  this.$store.dispatch('asyncUpdateUser', {nickname: res.data[0].nickName, id: res.data[0].account})
-                  sessionStorage.setItem('state', JSON.stringify(this.$store.state.user))
-                  this.$router.push({path: "/client/hotelInfo"});
-                }
-              }).catch(err => {
+          _this.$api.loginAPI.login(parseInt(this.loginForm.id), this.loginForm.password).then(resp => {
+            console.log(resp)
+
+          }).catch(err => {
             console.log(err);
           });
         }
@@ -130,7 +118,7 @@ export default {
   height: 45%;
   border-radius: 20px;
   position: absolute;
-  left: 60%;
+  left: 70%;
   top: 50%;
   transform: translate(-50%, -50%);
   border: 1px solid #dccfcf;
@@ -152,7 +140,8 @@ export default {
 }
 
 .image {
-  margin-left:5%;
+  margin-left: 5%;
+  margin-top: 6%;
 }
 
 .in {

@@ -1,12 +1,12 @@
 <template>
   <div id="home">
-    <div class="home_background">
-      <vue-particles color="#409EFF" :particleOpacity="0.7" :particlesNumber="100" shapeType="star" :particleSize="5"
-                     linesColor="#409EFF" :linesWidth="1" :lineLinked="true" :lineOpacity="0.4" :linesDistance="150"
-                     :moveSpeed="4" :hoverEffect="true" hoverMode="grab" :clickEffect="true" clickMode="bubble">
-      </vue-particles>
-      <h1>Home</h1>
-    </div>
+<!--    <div class="home_background">-->
+<!--&lt;!&ndash;      <vue-particles color="#409EFF" :particleOpacity="0.7" :particlesNumber="100" shapeType="star" :particleSize="5"&ndash;&gt;-->
+<!--&lt;!&ndash;                     linesColor="#409EFF" :linesWidth="1" :lineLinked="true" :lineOpacity="0.4" :linesDistance="150"&ndash;&gt;-->
+<!--&lt;!&ndash;                     :moveSpeed="4" :hoverEffect="true" hoverMode="grab" :clickEffect="true" clickMode="bubble">&ndash;&gt;-->
+<!--&lt;!&ndash;      </vue-particles>&ndash;&gt;-->
+<!--      -->
+<!--    </div>-->
   </div>
 </template>
 

@@ -12,21 +12,39 @@
 
     <div class="card">
       <el-card v-for="(info, index) in information" :key="index"
-               style="margin-top: 1%;margin-left:10%;margin-right:10%;width: 80%"
+               style="margin-top: 1%;margin-left:2.5%;margin-right:2.5%;width: 95%"
                :body-style="{ display: 'flex', flexWrap: 'wrap',textAlign: 'left' }">
         <div style="flex-basis: 10%">
-          <h3>课题组 {{ info.title }}</h3>
-          <span>负责人{{ info.professor }}</span>
+          <div class="title">课题组</div>
+          <span> {{ info.group_name }}</span>
         </div>
 
         <div style="flex-basis: 35%">
-          <div ref="chartDom" :id="'chart_' + index" style="height: 200px;"></div>
+          <div class="title" style="text-align: center">经费总览</div>
+          <div ref="chartDom" :id="'chart_' + index" style="height: 300px;"></div>
         </div>
 
-        <div style="flex-basis: 25%">
-          <h3>经费使用情况</h3>
-        </div>
-        <div style="flex-basis: 25%">
+        <div style="flex-basis: 50%">
+          <div class="container">
+            <div class="title" style="text-align: center;flex:1">经费使用情况</div>
+            <el-button type="success" round @click="viewDetails()" class="button">
+              查看详情
+            </el-button>
+
+          </div>
+          <div class="applicationTable">
+            <el-table :data="info.fundings" border style="width:100%"
+                      :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
+                      highlight-current-row>
+              <el-table-column align="center" fixed prop="name" label="经费"></el-table-column>
+              <el-table-column align="center" prop="value" label="总额"></el-table-column>
+              <el-table-column align="center" prop="used" label="已使用"></el-table-column>
+              <el-table-column align="center" prop="rest" label="余额"></el-table-column>
+              <el-table-column align="center" prop="execute_rate" label="执行率"></el-table-column>
+
+              <el-table-column align="center" prop="qualify" label="是否达标"></el-table-column>
+            </el-table>
+          </div>
         </div>
 
       </el-card>
@@ -44,67 +62,75 @@ export default {
       queryForm: {
         groupName: "",
       },
+
       information: [
         {
-          title: "A",
-          professor: "123",
-          chartData: [
-            {name: '国自然', value: 100},
-            {name: '中央财政支持', value: 200},
-            {name: '高水平', value: 300},
-          ],
-        },
-        {
-          title: "B",
-          professor: "456",
-          chartData: [
-            {name: '国自然', value: 100},
-            {name: '中央财政支持', value: 400},
-            {name: '高水平', value: 500},
-          ],
-        },
-        {
-          title: "C",
-          professor: "789",
-          chartData: [
-            {name: '国自然', value:600},
-            {name: '中央财政支持', value: 100},
-            {name: '高水平', value: 800},
-          ],
+          group_name: "唐博",
+          fundings: [
+            {
+              name: "国自然",
+              value: 100,
+              used: 50,
+              rest: 50,
+              execute_rate: "50%",
+              qualify: "是"
+            },
+            {
+              name: "中央财政支持地方高校经费",
+              value: 200,
+              used: 100,
+              rest: 50,
+              execute_rate: "50%",
+              qualify: "是"
+            },
+            {
+              name: "高水平",
+              value: 300,
+              used: 150,
+              rest: 50,
+              execute_rate: "50%",
+              qualify: "是"
+            }],
         },
       ],
-
     }
   },
   methods: {
     conditionQuery() {
     },
+    viewDetails() {
+
+    }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.information.forEach((info, index) => {
-        const chartDom = document.getElementById(`chart_${index}`);
-        const chart = echarts.init(chartDom);
-        chart.setOption({
-          title: {
-            text: '经费总览',
-            left: 'center', // 标题左侧距离为图表区域的中心
-            top: 0, // 标题顶部距离为图表区域高度的一半
-            // text: '经费总览',
-            // x: 'center',
-            // y: 'top',
-            // textAlign: 'center',
-            // textBaseline: 'top',
-          },
-          tooltip: {},
-          series: [{
-            type: 'pie',
-            data: info.chartData,
-          }],
+    let _this = this
+    this.information = []
+    this.$api.adminAPI.getAllFundingInfo().then(resp => {
+      console.log(resp.data.data.funding_info)
+      _this.information = resp.data.data.funding_info
+      _this.$nextTick(() => {
+        _this.information.forEach((info, index) => {
+          const chartDom = document.getElementById(`chart_${index}`);
+          const chart = echarts.init(chartDom);
+          chart.setOption({
+            title: {
+              left: 'center', // 标题左侧距离为图表区域的中心
+              top: 0, // 标题顶部距离为图表区域高度的一半
+            },
+            tooltip: {},
+            series: [{
+              type: 'pie',
+              data: info.fundings,
+            }],
+          });
         });
       });
+    }).catch(err => {
+      console.log(err);
     });
-  },
+
+
+  }
 }
 </script>
 
@@ -114,4 +140,21 @@ export default {
   margin: 10px 25px;
 }
 
+.title {
+  font-size: 20px;
+  line-height: 1.5;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 2%;
+}
+
+.button {
+  display: inline-block;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 </style>

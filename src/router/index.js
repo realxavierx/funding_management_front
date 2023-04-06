@@ -10,12 +10,17 @@ import GroupManagement from "@/views/administrator/GroupManagement";
 import Application from "@/views/user/Application";
 import UserHome from "@/views/user/UserHome";
 import ApplicationManagement from "@/views/administrator/ApplicationManagement";
+import UserManagement from "@/views/administrator/UserManagement";
+import fundingManagement from "@/views/administrator/FundingManagement";
+import FundingManagement from "@/views/administrator/FundingManagement";
+import UseOfFunds from "@/views/user/UseOfFunds";
+import GroupPage from "@/views/GroupPage";
 
 const routes = [
     {
         path: '/',
         name: 'home',
-        component: Home,
+        component: UserLogin,
     },
     {
         path: '/userLogin',
@@ -49,26 +54,58 @@ const routes = [
         path: '/admin',
         name: 'adminHome',
         component: AdminHome,
-        children: [{
-            path: 'groupManagement',
-            name: 'groupManagement',
-            component: GroupManagement,
-        }, {
-            path: 'applicationManagement',
-            name: 'applicationManagement',
-            component: ApplicationManagement
-        }
+        children: [
+            {
+                path: 'userManagement',
+                name: 'userManagement',
+                component: UserManagement
+            },
+            {
+                path: 'groupManagement',
+                name: 'groupManagement',
+                component: GroupManagement,
+            },
+            {
+                path: 'fundingManagement',
+                name: 'fundingManagement',
+                component: FundingManagement,
+            },
+            {
+                path: 'applicationManagement',
+                name: 'applicationManagement',
+                component: ApplicationManagement
+            },
+            {
+                // 课题组情况
+                path: 'groupPage',
+                name: 'groupPage',
+                component: GroupPage
+            }
         ]
     },
     {
         path: '/user',
         name: 'userHome',
         component: UserHome,
-        children: [{
-            path: 'application',
-            name: 'application',
-            component: Application,
-        }
+        children: [
+            {
+                // 报销申请
+                path: 'application',
+                name: 'application',
+                component: Application,
+            },
+            {
+                // 经费使用情况
+                path: 'useOfFunds',
+                name: 'useOfFunds',
+                component: UseOfFunds,
+            },
+            {
+                // 课题组情况
+                path: 'groupPage',
+                name: 'groupPage',
+                component: GroupPage
+            }
         ]
     },
 ]
