@@ -18,12 +18,6 @@
           </el-select>
         </el-form-item>
 
-
-        <el-form-item label="经办人" label-width="150px">
-          <el-input v-model="applicationForm.identity" clearable>
-          </el-input>
-        </el-form-item>
-
         <el-form-item label="课题组" label-width="150px">
           <el-select v-model="applicationForm.group" placeholder="请选择您所在的课题组" size="large"
                      style="width: 100%" clearable>
@@ -35,6 +29,13 @@
             />
           </el-select>
         </el-form-item>
+
+        <el-form-item label="经办人" label-width="150px">
+          <el-input v-model="applicationForm.identity" clearable>
+          </el-input>
+        </el-form-item>
+
+
         <el-form-item label="您选择经费的课题组" label-width="150px">
           <el-tag type="primary" size="large">总额度为 {{ totalMoney }} 万元</el-tag>
           <el-tag type="success" size="large">已使用额度为 {{ usedMoney }} 万元</el-tag>
