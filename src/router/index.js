@@ -1,20 +1,30 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import Home from '@/views/Home.vue'
+
+//login
 import UserLogin from '@/views/login/UserLogin.vue'
 import AdministratorLogin from '@/views/login/AdministratorLogin.vue'
 import UserSignIn from '@/views/login/UserSignIn.vue'
 import UserSignUp from '@/views/login/UserSignUp.vue'
 import ResetPassword from '@/views/login/ResetPassword.vue'
+
+//admin
 import AdminHome from "@/views/administrator/AdminHome";
 import GroupManagement from "@/views/administrator/GroupManagement";
-import Application from "@/views/user/Application";
-import UserHome from "@/views/user/UserHome";
 import ApplicationManagement from "@/views/administrator/ApplicationManagement";
 import UserManagement from "@/views/administrator/UserManagement";
 import fundingManagement from "@/views/administrator/FundingManagement";
 import FundingManagement from "@/views/administrator/FundingManagement";
+import AdminHomePage from "@/views/administrator/AdminHomePage";
+import AdminMessageNotification from "@/views/administrator/AdminMessageNotification";
+
+//user
+import Application from "@/views/user/Application";
+import UserHome from "@/views/user/UserHome";
 import UseOfFunds from "@/views/user/UseOfFunds";
-import GroupPage from "@/views/GroupPage";
+import UserHomePage from "@/views/user/UserHomePage";
+import GroupPage from "@/views/user/GroupPage";
+import MessageNotification from "@/views/user/MessageNotification";
+import ApplicationCheck from "@/views/user/ApplicationCheck";
 
 const routes = [
     {
@@ -56,6 +66,11 @@ const routes = [
         component: AdminHome,
         children: [
             {
+                path: 'adminHomePage',
+                name: 'adminHomePage',
+                component: AdminHomePage
+            },
+            {
                 path: 'userManagement',
                 name: 'userManagement',
                 component: UserManagement
@@ -74,12 +89,10 @@ const routes = [
                 path: 'applicationManagement',
                 name: 'applicationManagement',
                 component: ApplicationManagement
-            },
-            {
-                // 课题组情况
-                path: 'groupPage',
-                name: 'groupPage',
-                component: GroupPage
+            }, {
+                path: 'adminMessageNotification',
+                name: 'adminMessageNotification',
+                component: AdminMessageNotification
             }
         ]
     },
@@ -88,6 +101,11 @@ const routes = [
         name: 'userHome',
         component: UserHome,
         children: [
+            {
+                path: 'userHomePage',
+                name: 'userHomePage',
+                component: UserHomePage
+            },
             {
                 // 报销申请
                 path: 'application',
@@ -105,6 +123,16 @@ const routes = [
                 path: 'groupPage',
                 name: 'groupPage',
                 component: GroupPage
+            },
+            {
+                path: 'messageNotification',
+                name: ' messageNotification',
+                component: MessageNotification
+            }, {
+                path: 'applicationCheck',
+                name: 'applicationCheck',
+                component: ApplicationCheck
+
             }
         ]
     },

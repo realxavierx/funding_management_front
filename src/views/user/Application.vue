@@ -1,3 +1,4 @@
+<!-- -1代表新加入的申请-->
 <template>
   <div class="application">
     <div class="title">
@@ -11,9 +12,9 @@
                      style="width: 100%" clearable>
             <el-option
                 v-for="item in funds"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item"
+                :label="item"
+                :value="item"
             />
           </el-select>
         </el-form-item>
@@ -23,16 +24,15 @@
                      style="width: 100%" clearable>
             <el-option
                 v-for="item in groups"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item"
+                :label="item"
+                :value="item"
             />
           </el-select>
         </el-form-item>
 
         <el-form-item label="经办人" label-width="150px">
-          <!--与账号关联-->
-          <el-input v-model="applicationForm.identity" disabled/>
+          <el-input v-model="userName" disabled/>
         </el-form-item>
 
 
@@ -55,14 +55,14 @@
         </el-form-item>
 
         <el-form-item label="内容摘要" label-width="150px">
-          <el-input v-model="applicationForm.abstract" prefix-icon="el-icon-search" placeholder="请请入内容摘要"
+          <el-input v-model="applicationForm.abstract" prefix-icon="el-icon-search" placeholder="请输入内容摘要"
                     type="textarea" :rows="2">
           </el-input>
         </el-form-item>
 
 
         <el-form-item label="备注" label-width="150px">
-          <el-input v-model="applicationForm.remarks" prefix-icon="el-icon-search" placeholder="请请入备注"
+          <el-input v-model="applicationForm.remarks" prefix-icon="el-icon-search" placeholder="请输入备注"
                     type="textarea" :rows="2">
           </el-input>
         </el-form-item>
@@ -97,9 +97,10 @@ export default {
       totalMoney: 0,
       usedMoney: 0,
       restMoney: 0,
+      userName: this.$store.getters.getUser.name,
+      userId: this.$store.getters.getUser.id,
       applicationForm: {
         fundNameAndId: "",
-        identity: "唐博",
         group: "",
         money: "",
         category: "",
@@ -107,31 +108,13 @@ export default {
         remarks: ""
       },
       funds: [
-        {
-          value: '国自然（Y012300XX）',
-          label: '国自然（Y012300XX）',
-        },
-        {
-          value: '中央财政支持地方高校经费（Y120XX）',
-          label: '中央财政支持地方高校经费（Y120XX）',
-        },
-        {
-          value: '高水平（G000XX）',
-          label: '高水平（G000XX）',
-        }],
+        '国自然（Y012300XX）',
+        '中央财政支持地方高校经费（Y120XX）',
+        '高水平（G000XX）',
+      ],
       groups: [
-        {
-          value: '张老师',
-          label: '张老师',
-        },
-        {
-          value: '李老师',
-          label: '李老师',
-        },
-        {
-          value: '王老师',
-          label: '王老师',
-        }],
+        "唐博", "于仕琪"
+      ],
       categories: [
         {
           value: '专用材料费',
@@ -167,14 +150,13 @@ export default {
     confirmSubmit() {
       const fundName = this.applicationForm.fundNameAndId.split("（")
       const _this = this
-      // console.log(fundName)
-      this.$api.userAPI.applyFunding(fundName[0],
-          this.applicationForm.identity, this.applicationForm.group,
+      this.$api.userAPI.applyFunding(-1, fundName[0],
+          this.userId, this.applicationForm.group,
           Number(this.applicationForm.money), this.applicationForm.category[0],
           this.applicationForm.category[1], this.applicationForm.abstract,
           this.applicationForm.remarks).then(resp => {
-        this.dialogVisibleSubmit = false
-        this.$message({
+        _this.dialogVisibleSubmit = false
+        _this.$message({
           showClose: true,
           message: '您已成功提交',
           type: 'success'
@@ -193,7 +175,6 @@ export default {
     handleClear() {
       this.applicationForm = {
         fundNameAndId: "",
-        identity: "",
         group: "",
         money: "",
         category: "",
@@ -206,7 +187,7 @@ export default {
       const fundName = this.applicationForm.fundNameAndId.split("（")
       const _this = this
       this.$api.userAPI.getFundingInfoByGroupAndFundingName(fundName[0], _this.applicationForm.group).then(resp => {
-        console.log(resp)
+        // console.log(resp)
         _this.totalMoney = resp.data.data.funding_info.total
         _this.usedMoney = resp.data.data.funding_info.used
         _this.restMoney = resp.data.data.funding_info.rest
@@ -224,6 +205,8 @@ export default {
           this.fundChanged = false
           this.groupChanged = false
         }
+      } else if (oldValue !== "" && newValue !== "") {
+        this.getMoneyInfo()
       }
     },
     'applicationForm.group'(newValue, oldValue) {
@@ -234,6 +217,8 @@ export default {
           this.fundChanged = false
           this.groupChanged = false
         }
+      } else if (oldValue !== "" && newValue !== "") {
+        this.getMoneyInfo()
       }
     }
 
@@ -242,16 +227,10 @@ export default {
     let _this = this
     _this.groups = []
     _this.categories = []
-    this.$api.userAPI.getAllResearchGroups().then(resp => {
-      for (const elem of resp.data.data.research_groups) {
-        _this.groups.push({
-          value: elem.name,
-          label: elem.name
-        })
-      }
-    }).catch(err => {
-      console.log(err);
-    });
+    for (const elem of this.$store.getters.getUser.groupName) {
+      console.log(elem)
+      _this.groups.push(elem)
+    }
     this.$api.userAPI.getAllExpenseCategories().then(resp => {
       for (const elem of resp.data.data.expense_categories) {
         let selected = _this.categories.findIndex((e) => e.value === elem.first)

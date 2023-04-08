@@ -12,12 +12,12 @@
                            alt="logo.png"/>
                 <el-button style="margin-top: 25px; margin-left: 30px"
                            v-if="user.status === 'normal'"
-                           type="danger" @click="blockStudent(user)">
+                           type="danger" @click="blockUser(user)">
                   Block User
                 </el-button>
                 <el-button style="margin-top: 30px; margin-left: 26px"
                            v-if="user.status === 'blocked'"
-                           type="success" @click="unblockStudent(user)">
+                           type="success" @click="unblockUser(user)">
                   Unblock User
                 </el-button>
               </el-col>
@@ -28,7 +28,7 @@
                 </el-row>
                 <el-row>
                   <el-col :span="24">
-                    <p>Department: {{ user.department }}</p>
+                    <p>Role: {{ user.role }}</p>
                   </el-col>
                 </el-row>
                 <el-row>
@@ -71,7 +71,6 @@ export default {
   name: "UserManagement",
 
   data() {
-
     return {
       users: []
     }
@@ -83,10 +82,34 @@ export default {
       let _this = this;
       this.$api.userAPI.getAllUsers()
           .then((resp) => {
+            _this.users = resp.data.data.user
+            console.log(_this.users)
+          })
+    },
+
+    blockUser(user) {
+      this.$api.userAPI.blockUser(user.sid)
+          .then((resp) => {
             console.log(resp)
-            _this.users = resp.data.users
+            if (resp.status === 200) {
+              user.status = 'blocked'
+            }
+          })
+    },
+
+    unblockUser(user) {
+      this.$api.userAPI.unblockUser(user.sid)
+          .then((resp) => {
+            console.log(resp)
+            if (resp.status === 200) {
+              user.status = 'normal'
+            }
           })
     }
+  },
+
+  mounted() {
+    this.getAllUsers()
   }
 }
 </script>

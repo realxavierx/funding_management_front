@@ -1,5 +1,4 @@
 <template>
-
   <div class="userSignIn">
     <div class="background">
       <div class="change">
@@ -95,13 +94,31 @@ export default {
     submitLoginForm() {
       const _this = this
       this.$refs.loginFormRef.validate(async valid => {
-        //1.验证失败则结束
-        if (!valid) {
-          return;
-        } else {
+        //验证成功则结束
+        if (valid) {
           _this.$api.loginAPI.login(parseInt(this.loginForm.id), this.loginForm.password).then(resp => {
-            console.log(resp)
-
+            if (resp.data.code === 400) {
+              _this.$message({
+                showClose: true,
+                message: resp.data.message,
+                type: 'error'
+              });
+            } else {
+              const temp = resp.data.data
+              _this.$store.dispatch('asyncUpdateUser', {
+                groupName: temp.group,
+                id: temp.user[0].sid,
+                name: temp.user[0].name,
+                status: temp.user[0].status,
+                role: temp.user[0].role
+              })
+              sessionStorage.setItem('state', JSON.stringify(this.$store.state.user))
+              if (temp.user[0].role === "管理员") {
+                this.$router.push({path: "/admin/adminHomePage"});
+              } else {
+                this.$router.push({path: "/user/userHomePage"});
+              }
+            }
           }).catch(err => {
             console.log(err);
           });
