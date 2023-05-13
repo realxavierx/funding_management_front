@@ -72,10 +72,37 @@ export function getFundingInfoByGroupAndFundingName(funding, group) {
     })
 }
 
-export function applyFunding(id, fundName, applicantID, group, money, category0, category1, summary, remarks) {
+export function applyFunding(id, fundName, applicantID, group, money, category0, category1, summary, remarks,status) {
     return request({
         method: 'POST',
         url: '/apply/applyFunding',
+        data: {
+            id: id,
+            fundName: fundName,
+            applicant: applicantID,
+            group: group,
+            money: money,
+            first_category: category0,
+            second_category: category1,
+            abstracts: summary,
+            remarks: remarks,
+            status:status,
+        },
+        transformRequest: [function (data) {
+            let str = '';
+            for (let key in data) {
+                str += encodeURIComponent(key) + '=' + encodeURIComponent(data[key]) + '&';
+            }
+            return str;
+        }]
+    })
+}
+
+
+export function applyFundingDraft(id, fundName, applicantID, group, money, category0, category1, summary, remarks) {
+    return request({
+        method: 'POST',
+        url: '/apply/applyFundingDraft',
         data: {
             id: id,
             fundName: fundName,
@@ -151,3 +178,15 @@ export function getApplicationCountByGroup(group, status) {
         }
     })
 }
+
+
+export function deleteApplicationByID(id) {
+    return request({
+        method: 'GET',
+        url: '/apply/deleteApplicationByID',
+        params: {
+            id: id
+        }
+    })
+}
+

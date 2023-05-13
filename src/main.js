@@ -5,9 +5,10 @@ import store from './store'
 import installElementPlus from './plugins/element'
 import VueParticles from 'vue-particles'
 import api from './apis'
+import vue3JsonExcel from "vue3-json-excel"
 
 const app = createApp(App)
 installElementPlus(app)
 app.use(VueParticles)
 app.config.globalProperties.$api = api;
-app.use(store).use(router).mount('#app')
+app.use(store).use(vue3JsonExcel).use(router).mount('#app')

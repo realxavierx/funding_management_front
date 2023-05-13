@@ -76,8 +76,8 @@ export default {
       if (_this.activities.length === 0) {
         _this.activities = [
           {
-            timestamp: "",
-            content: "没有任何通知哦~"
+            date: "",
+            messages: "没有任何通知哦~"
           }
         ]
       }

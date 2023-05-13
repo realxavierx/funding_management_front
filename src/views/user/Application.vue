@@ -6,8 +6,8 @@
     </div>
 
     <div class="roomForm">
-      <el-form :model="applicationForm" style="width: 100%">
-        <el-form-item label="经费编号与经费名称" label-width="150px">
+      <el-form :model="applicationForm" ref="applicationFormRef" style="width: 100%" :rules="formRules">
+        <el-form-item label="经费编号与经费名称" prop=fundNameAndId label-width="150px">
           <el-select v-model="applicationForm.fundNameAndId" placeholder="请选择经费编号及名称" size="large"
                      style="width: 100%" clearable>
             <el-option
@@ -19,7 +19,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="课题组" label-width="150px">
+        <el-form-item label="课题组" prop=group label-width="150px">
           <el-select v-model="applicationForm.group" placeholder="请选择您所在的课题组" size="large"
                      style="width: 100%" clearable>
             <el-option
@@ -42,12 +42,12 @@
           <el-tag type="warning" size="large">可用额度为 {{ restMoney }} 万元</el-tag>
         </el-form-item>
 
-        <el-form-item label="支出金额" label-width="150px">
+        <el-form-item label="支出金额" prop=money label-width="150px">
           <el-input v-model="applicationForm.money" placeholder="支出金额不能大于可使用额度" clearable>
           </el-input>
         </el-form-item>
 
-        <el-form-item label="支出类别" label-width="150px">
+        <el-form-item label="支出类别" prop=category label-width="150px">
           <el-cascader v-model="applicationForm.category" :options="categories"
                        :props="{ expandTrigger: 'hover' }"
                        style="width: 100%" placeholder="请选择支出类别" clearable
@@ -70,6 +70,7 @@
         <div class="btns">
           <el-button type="info" size="large" round @click="handleClear()">清空</el-button>
           <el-button type="success" size="large" round @click="handleSubmit()">提交</el-button>
+          <el-button type="primary" size="large" round @click="handleDraft()">暂存</el-button>
         </div>
       </el-form>
     </div>
@@ -86,10 +87,18 @@
 </template>
 
 <script>
-
 export default {
   name: "Application",
   data() {
+    const validateMoney = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入支出金额"));
+      } else if (value > this.restMoney) {
+        callback(new Error("支出金额不能大于剩余金额"));
+      } else {
+        callback();
+      }
+    };
     return {
       dialogVisibleSubmit: false,
       fundChanged: false,  //用于判断fund值是否改变
@@ -144,6 +153,14 @@ export default {
           ]
         }
       ],
+      //指定验证规则
+      formRules: {
+        fundNameAndId: [{required: true, message: '请选择基金名称和编号', trigger: 'blur'}],
+        group: [{required: true, message: '请选择所属课题组', trigger: "blur"}],
+        money: [{required: true, validator: validateMoney, trigger: "blur"}],
+        category: [{required: true, message: '请选择支出类别', trigger: "blur"}],
+      },
+
     }
   },
   methods: {
@@ -154,7 +171,7 @@ export default {
           this.userId, this.applicationForm.group,
           Number(this.applicationForm.money), this.applicationForm.category[0],
           this.applicationForm.category[1], this.applicationForm.abstract,
-          this.applicationForm.remarks).then(resp => {
+          this.applicationForm.remarks, "pending").then(resp => {
         _this.dialogVisibleSubmit = false
         _this.$message({
           showClose: true,
@@ -167,10 +184,36 @@ export default {
     },
 
     handleSubmit() {
-      this.dialogVisibleSubmit = true
+      this.$refs.applicationFormRef.validate(async valid => {
+        if (valid) {
+          this.dialogVisibleSubmit = true
+        }
+      })
     },
     unSubmit() {
       this.dialogVisibleSubmit = false;//对话框不显示
+    },
+    handleDraft() {
+      this.$refs.applicationFormRef.validate(async valid => {
+        if (valid) {
+          const fundName = this.applicationForm.fundNameAndId.split("（")
+          const _this = this
+          this.$api.userAPI.applyFundingDraft(-1, fundName[0],
+              this.userId, this.applicationForm.group,
+              Number(this.applicationForm.money), this.applicationForm.category[0],
+              this.applicationForm.category[1], this.applicationForm.abstract,
+              this.applicationForm.remarks).then(resp => {
+            _this.dialogVisibleSubmit = false
+            _this.$message({
+              showClose: true,
+              message: '您已成功暂存申请',
+              type: 'success'
+            });
+          }).catch(err => {
+            console.log(err);
+          });
+        }
+      })
     },
     handleClear() {
       this.applicationForm = {
@@ -182,7 +225,6 @@ export default {
         remarks: ""
       }
     },
-
     getMoneyInfo() {
       const fundName = this.applicationForm.fundNameAndId.split("（")
       const _this = this

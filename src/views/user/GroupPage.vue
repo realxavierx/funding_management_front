@@ -6,12 +6,11 @@
     </el-radio-group>
 
     <div>
-      <el-card v-for="member in groupMembers" :key="member.sid">
+      <el-card v-for="member in groupMembers" :key="member.sid" style="width:80%;margin:auto">
         <el-card style="height: 250px">
           <el-row>
             <el-col :span="8">
-              <el-avatar style="margin-top: 10px; margin-left: 20px" :size="140" :src="member.picture_url"
-                         alt="logo.png"/>
+              <el-avatar style="margin-top: 10px; margin-left: 20px" :size="140" :src="require('@/assets/team.png')"/>
             </el-col>
             <el-col :span="1"></el-col>
             <el-col :span="14">

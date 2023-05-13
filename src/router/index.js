@@ -2,7 +2,6 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 //login
 import UserLogin from '@/views/login/UserLogin.vue'
-import AdministratorLogin from '@/views/login/AdministratorLogin.vue'
 import UserSignIn from '@/views/login/UserSignIn.vue'
 import UserSignUp from '@/views/login/UserSignUp.vue'
 import ResetPassword from '@/views/login/ResetPassword.vue'
@@ -16,7 +15,6 @@ import fundingManagement from "@/views/administrator/FundingManagement";
 import FundingManagement from "@/views/administrator/FundingManagement";
 import AdminHomePage from "@/views/administrator/AdminHomePage";
 import AdminMessageNotification from "@/views/administrator/AdminMessageNotification";
-import SetExecutionRate from "@/views/administrator/SetExecutionRate";
 import GroupDetails from "@/views/administrator/GroupDetails";
 
 //user
@@ -38,11 +36,6 @@ const routes = [
         path: '/userLogin',
         name: 'userLogin',
         component: UserLogin
-    },
-    {
-        path: '/administratorLogin',
-        name: 'administratorLogin',
-        component: AdministratorLogin
     },
     {
         // 登录
@@ -96,10 +89,6 @@ const routes = [
                 name: 'adminMessageNotification',
                 component: AdminMessageNotification
             }, {
-                path: 'setExecutionRate',
-                name: 'setExecutionRate',
-                component: SetExecutionRate
-            }, {
                 path: 'groupDetails',
                 name: 'groupDetails',
                 component: GroupDetails
@@ -152,5 +141,14 @@ const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes
 })
+//登录拦截
+// router.beforeEach((to, from, next) => {
+//     const user = sessionStorage.getItem("user")
+//     if (to.name !== 'userLogin' && !user) {
+//         next({name: 'userLogin'})
+//     } else {
+//         next()
+//     }
+// })
 
 export default router

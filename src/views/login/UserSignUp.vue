@@ -24,9 +24,9 @@
           <el-form class="login_form" ref="loginFormRef" :model="loginForm" :rules="loginRules"
                    :v-model="submitLoginForm" @keyup.enter.native="submitLoginForm()">
 
-            <el-form-item label="昵称" prop="nickName" label-width="100px">
-              <el-input class="in" v-model="loginForm.nickName" prefix-icon="iconfont icon-nicheng"
-                        placeholder="请输入昵称">
+            <el-form-item label="姓名" prop="name" label-width="100px">
+              <el-input class="in" v-model="loginForm.name" prefix-icon="iconfont icon-nicheng"
+                        placeholder="请输入姓名">
               </el-input>
             </el-form-item>
             <!-- 账号 -->
@@ -46,25 +46,10 @@
                         placeholder="请再次输入密码" show-password>
               </el-input>
             </el-form-item>
-            <el-form-item label="电话" prop="phone" label-width="100px">
-              <el-input class="in" v-model="loginForm.phone" prefix-icon="iconfont icon-shouji"
-                        placeholder="请输入电话号">
-              </el-input>
-            </el-form-item>
             <el-form-item label="邮箱" prop="email" label-width="100px">
               <el-input class="in" v-model="loginForm.email" prefix-icon="iconfont icon-shouji"
                         placeholder="请输入邮箱">
               </el-input>
-            </el-form-item>
-            <el-form-item label="验证码" prop="verifyCode" label-width="100px">
-              <div style="display:flex">
-                <el-input class="in" v-model="loginForm.verifyCode"
-                          prefix-icon="iconfont icon-yanzhengma" placeholder="请输入验证码">
-                </el-input>
-                <el-button type="primary" @click="getVerifyCode()">
-                  获取验证码
-                </el-button>
-              </div>
             </el-form-item>
             <!-- 按钮 -->
             <div class="btns">
@@ -81,7 +66,7 @@
 <script>
 export default {
   data() {
-    var validatePass = (rule, value, callback) => {
+    const validatePass = (rule, value, callback) => {
       //value：password的值，callback:如果都不满足，则正常提交
       if (value === "") {
         callback(new Error("请输入密码"));//输入为空的提示信息
@@ -94,7 +79,7 @@ export default {
         callback();
       }
     };
-    var validatePass2 = (rule, value, callback) => {
+    const validatePass2 = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请再次输入密码"));
       } else if (value !== this.loginForm.password) {
@@ -103,11 +88,11 @@ export default {
         callback();
       }
     };
-    var validateEmail = (rule, value, callback) => {
+    const validateEmail = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入邮箱"));
       } else {
-        var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+        const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
         if (!reg.test(value)) {
           callback(new Error("请输入正确的邮箱"));
         } else {
@@ -115,45 +100,28 @@ export default {
         }
       }
     };
-    var validatePhone = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入电话号"));
-      } else {
-        var reg = /^1[3456789]\d{9}$/;
-        if (!reg.test(value)) {
-          callback(new Error("请输入正确的电话号"));
-        } else {
-          callback();
-        }
-      }
-    }
     return {
       //表单数据
       loginForm: {
         id: "",
         password: "",
         checkPass: "",
-        nickName: "",
-        phone: "",
+        name: "",
         email: "",
-        verifyCode: ""
       },
       code: "0",
       //指定验证规则
       loginRules: {
         //校验id
         id: [
-          {required: true, message: '请输入账号', trigger: 'blur'},
-          {min: 0, max: 10, message: '账号长度须在 0 到 10 个字符', trigger: 'blur'}
+          {required: true, message: '请输入工号', trigger: 'blur'},
+          {min: 8, max: 8, message: '工号长度须为8位数字', trigger: 'blur'}
         ],
         //校验密码
         password: [{required: true, validator: validatePass, trigger: "blur"}],
         checkPass: [{required: true, validator: validatePass2, trigger: "blur"}],
-        nickName: [{required: true, message: '请输入昵称', trigger: 'blur'},
-          {min: 0, max: 10, message: '昵称长度须在 0 到 10 个字符', trigger: 'blur'}],
-        phone: [{required: true, validator: validatePhone, trigger: "blur"}],
+        name: [{required: true, message: '请输入姓名', trigger: 'blur'}],
         email: [{required: true, validator: validateEmail, trigger: "blur"}],
-        verifyCode: [{required: true, message: '请输入验证码', trigger: "blur"}],
       },
     };
 
@@ -163,41 +131,29 @@ export default {
       this.$refs.loginFormRef.resetFields();
     },
     submitLoginForm() {
+      const _this = this
       this.$refs.loginFormRef.validate(async valid => {
         //1.验证失败则结束
-        if (!valid) {
-          return;
-        } else if (this.loginForm.verifyCode !== this.code) {
-          this.$message({
-            showClose: true,
-            message: "验证码错误",
-            type: "error"
-          });
-        } else {
-          this.$api.loginApi.userSignUp(this.loginForm.nickName, this.loginForm.id,
-              this.loginForm.password, this.loginForm.phone).then(res => {
-            if (res.data.code == 7000) {
-              this.$message({
-                showClose: true,
-                message: res.data.message,
-                type: "error"
-              });
-            } else {
-              this.$router.push({path: "/userLogin"});
+        if (valid) {
+          this.$api.loginAPI.register(this.loginForm.name, this.loginForm.id,
+              this.loginForm.password, this.loginForm.email).then(resp => {
+            console.log(resp)
+            if (resp.data.code === 200) {
+              _this.$message({
+                message: "您已成功注册，请等待管理员审批",
+                type: "success"
+              })
             }
           }).catch(err => {
+            _this.$message({
+              message: "该工号已存在，请重新输入",
+              type: "error"
+            })
             console.log(err);
           });
         }
       })
     },
-    getVerifyCode() {
-      this.$api.loginApi.sendEmail(this.loginForm.email).then(res => {
-        this.code = res.data.code
-      }).catch(err => {
-        console.log(err);
-      });
-    }
   },
 
 }
@@ -206,7 +162,7 @@ export default {
 <style scoped>
 .login_box {
   width: 45%;
-  height: 90%;
+  height: 75%;
   border-radius: 20px;
   position: absolute;
   left: 50%;

@@ -8,8 +8,8 @@
           <el-card style="height: 250px">
             <el-row>
               <el-col :span="8">
-                <el-avatar style="margin-top: 10px; margin-left: 20px" :size="140" :src="user.picture_url"
-                           alt="logo.png"/>
+                <el-avatar style="margin-top: 10px; margin-left: 20px" :size="140"
+                           :src="require('@/assets/team.png')"/>
                 <el-button style="margin-top: 25px; margin-left: 30px"
                            v-if="user.status === 'normal'"
                            type="danger" @click="blockUser(user)">
@@ -46,16 +46,16 @@
                       </el-tag>
                     </el-row>
                   </el-col>
-<!--                  <el-col :span="12">-->
-<!--                    <el-tag style="margin-left: 8px; margin-top: 7px; width: 120px; height: 40px; font-size: 18px"-->
-<!--                            type="success" v-if="user.online === 'True'">-->
-<!--                      Online-->
-<!--                    </el-tag>-->
-<!--                    <el-tag style="margin-left: 8px; margin-top: 7px; width: 120px; height: 40px; font-size: 18px"-->
-<!--                            type="info" v-if="user.online === 'False'">-->
-<!--                      Offline-->
-<!--                    </el-tag>-->
-<!--                  </el-col>-->
+                  <!--                  <el-col :span="12">-->
+                  <!--                    <el-tag style="margin-left: 8px; margin-top: 7px; width: 120px; height: 40px; font-size: 18px"-->
+                  <!--                            type="success" v-if="user.online === 'True'">-->
+                  <!--                      Online-->
+                  <!--                    </el-tag>-->
+                  <!--                    <el-tag style="margin-left: 8px; margin-top: 7px; width: 120px; height: 40px; font-size: 18px"-->
+                  <!--                            type="info" v-if="user.online === 'False'">-->
+                  <!--                      Offline-->
+                  <!--                    </el-tag>-->
+                  <!--                  </el-col>-->
                 </el-row>
               </el-col>
             </el-row>

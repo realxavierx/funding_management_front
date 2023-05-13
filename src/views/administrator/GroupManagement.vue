@@ -21,7 +21,7 @@
 
         <div style="flex-basis: 35%">
           <div class="title" style="text-align: center">经费总览</div>
-          <div ref="chartDom" :id="'chart_' + index" style="height: 300px;"></div>
+          <div ref="chartDom" :id="'chart_' + index" style="height: 300px"></div>
         </div>
 
         <div style="flex-basis: 50%">
@@ -30,13 +30,12 @@
             <el-button type="success" round @click="viewDetails(info.group_name)" class="button">
               查看详情
             </el-button>
-
           </div>
           <div class="applicationTable">
             <el-table :data="info.fundings" border style="width:100%"
                       :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
                       highlight-current-row>
-              <el-table-column align="center" fixed prop="name" label="经费"></el-table-column>
+              <el-table-column align="center" fixed prop="fund_name" label="经费"></el-table-column>
               <el-table-column align="center" prop="value" label="总额"></el-table-column>
               <el-table-column align="center" prop="used" label="已使用"></el-table-column>
               <el-table-column align="center" prop="rest" label="余额"></el-table-column>
@@ -139,12 +138,28 @@ export default {
         }
       });
     },
+    dealData(data) {
+      let result = []
+      data.forEach(item => {
+        result.push({
+          name: item.fund_name,
+          value: item.value,
+          used: item.used,
+          rest: item.rest,
+          execute_rate: item.execute_rate,
+          qualify: item.qualify
+        })
+      })
+      return result
+    }
   },
   mounted() {
     let _this = this
     this.information = []
     this.$api.adminAPI.getAllFundingInfo().then(resp => {
+      console.log(resp)
       _this.information = resp.data.data.funding_info
+      let fund_data = _this.dealData(_this.information[0].fundings)
       _this.$nextTick(() => {
         _this.information.forEach((info, index) => {
           const chartDom = document.getElementById(`chart_${index}`);
@@ -157,7 +172,7 @@ export default {
             tooltip: {},
             series: [{
               type: 'pie',
-              data: info.fundings,
+              data: fund_data,
             }],
           });
         });

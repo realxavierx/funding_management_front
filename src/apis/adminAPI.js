@@ -60,6 +60,17 @@ export function multiDetailTable() {
     })
 }
 
+
+export function oneGroupMultiDetailTable(group_name) {
+    return request({
+        method: 'GET',
+        url: '/funding//oneGroupMultiDetailTable',
+        params: {
+            group_name: group_name
+        }
+    })
+}
+
 export function approvalApplication(id, result, comment) {
     return request({
         method: 'POST',
@@ -79,4 +90,15 @@ export function approvalApplication(id, result, comment) {
     })
 }
 
+
+export function updateExecutionRate(code, rate) {
+    return request({
+        method: 'GET',
+        url: '/funding/updateExecutionRate',
+        params: {
+            code: code,
+            rate: rate
+        }
+    })
+}
 

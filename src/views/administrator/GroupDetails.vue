@@ -1,11 +1,10 @@
 <template>
-  <h3>课题组细节</h3>
-  <span>{{ group_name }}</span>
+  <h3>{{ group_name }}</h3>
   <div class="multi-detail-table">
     <!--      每个老师每个经费的具体使用的用处  XX经费授权明细-->
-    <el-collapse v-model="activeData" style="width: 80%;margin:3% auto">
-      <el-collapse-item v-for="(value, key, index) in aggregatedData" :title="key" :name="index">
-        <h4>{{ value[0].code }} - {{ value[0].name }} - {{ value[0].groups }}</h4>
+    <el-collapse style="width: 80%;margin:auto">
+      <el-collapse-item v-for="(value, key, index) in tableAggregatedData" :title="key" :name="index">
+        <h4>{{ value[0].code }} - {{ value[0].fund_name }}</h4>
         <h5>可使用经费总额：{{ value[0].total_sum }}</h5>
         <div v-for="item in value" :key="item">
           <el-descriptions>
@@ -26,28 +25,27 @@ export default {
     return {
       group_name: this.$route.query.group_name,
       multiDetailTableData: [],
-      aggregatedData: {},
+      tableAggregatedData: {},
     }
   },
   methods: {
-    aggregateGroupInfo() {
+    aggregateTableData() {
       for (const data of this.multiDetailTableData) {
-        let key = data.groups + "-" + data.name
-        if (this.aggregatedData.hasOwnProperty(key)) {
-          this.aggregatedData[key].push(data)
+        let key = data.fund_name
+        if (this.tableAggregatedData.hasOwnProperty(key)) {
+          this.tableAggregatedData[key].push(data)
         } else {
-          this.aggregatedData[key] = []
-          this.aggregatedData[key].push(data)
+          this.tableAggregatedData[key] = [data]
         }
       }
-    }
+    },
   },
   mounted() {
     let _this = this
-    this.$api.adminAPI.multiDetailTable().then(resp => {
-      // console.log(resp)
+    this.$api.adminAPI.oneGroupMultiDetailTable(this.group_name).then(resp => {
+      console.log(resp)
       _this.multiDetailTableData = resp.data.data.funding_info;
-      _this.aggregateGroupInfo()
+      _this.aggregateTableData();
     }).catch(err => {
       console.log(err);
     });

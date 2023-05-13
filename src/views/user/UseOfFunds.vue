@@ -7,6 +7,8 @@
       <el-radio-button v-for="group in user.groupName" :label="group" @change="groupChange"/>
     </el-radio-group>
 
+    <div ref="useOfFundChartDom" id="useOfFundChart" style="width: 70%; height: 500px; margin:auto"></div>
+
     <el-table :data="tableData" border style="width:100%"
               :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
               highlight-current-row>
@@ -24,6 +26,8 @@
 </template>
 
 <script>
+import * as echarts from "echarts"
+
 export default {
   name: "UseOfFunds",
   data() {
@@ -31,6 +35,7 @@ export default {
       tableData: [],
       user: this.$store.getters.getUser,
       selectedGroup: this.$store.getters.getUser.groupName[0],
+      fundNames: new Set(),
     }
   },
 
@@ -38,12 +43,83 @@ export default {
     groupChange() {
       const _this = this
       this.$api.userAPI.calculateExpenditureSummaryUser(this.selectedGroup).then(resp => {
-        console.log(resp)
-        _this.tableData = resp.data.data.funding_info
+        _this.tableData = resp.data.data.funding_info;
+        _this.visualizeChart();
       }).catch(err => {
         console.log(err);
       });
-    }
+    },
+
+    getUseOfFundTableSeries() {
+      let series = [];
+      let usedData = [];
+      let leftData = [];
+
+      for (const data of this.tableData) {
+        this.fundNames.add(data.fund_name);
+        usedData.push(data.used_sum);
+        leftData.push(data.left_sum);
+      }
+
+      series.push(
+          {
+            name: 'Used',
+            type: 'bar',
+            stack: 'used',
+            emphasis: {
+              focus: 'series'
+            },
+            data: usedData
+          },
+          {
+            name: 'Left',
+            type: 'bar',
+            stack: 'left',
+            emphasis: {
+              focus: 'series'
+            },
+            data: leftData
+          }
+      )
+
+      return series;
+    },
+
+    visualizeChart() {
+      let _this = this;
+      const useOfFundChartDom = document.getElementById("useOfFundChart");
+      const chart = echarts.init(useOfFundChartDom);
+      const series = _this.getUseOfFundTableSeries();
+      chart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {},
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: [..._this.fundNames]
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: series
+      })
+    },
+
+
   },
   mounted() {
     this.groupChange()

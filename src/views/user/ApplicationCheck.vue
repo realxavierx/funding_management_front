@@ -15,18 +15,9 @@
           <el-radio-button label="pending">待处理</el-radio-button>
           <el-radio-button label="pass">通过</el-radio-button>
           <el-radio-button label="refuse">拒绝</el-radio-button>
+          <el-radio-button label="draft">草稿箱</el-radio-button>
         </el-radio-group>
       </div>
-
-      <!--      <div class="query" style="float: right;clear: both;">-->
-      <!--        <el-form :model="queryForm" ref="queryForm" :inline="true">-->
-      <!--          <el-form-item prop="groupName">-->
-      <!--            <el-input prefix-icon="el-icon-search" placeholder="课题组名称" v-model="queryForm.groupName" clearable>-->
-      <!--            </el-input>-->
-      <!--          </el-form-item>-->
-      <!--          <el-button type="primary" @click="conditionQuery">查询</el-button>-->
-      <!--        </el-form>-->
-      <!--      </div>-->
     </div>
 
     <div class="applicationTable">
@@ -40,6 +31,12 @@
         <el-table-column align="center" prop="expense_category" label="支出类别"></el-table-column>
         <el-table-column prop="abstracts" label="内容摘要"></el-table-column>
         <el-table-column prop="remarks" label="备注"></el-table-column>
+
+        <el-table-column v-if="buttonRevocation" align="center" prop="operation" label="操作" width="200px">
+          <template #default="scope">
+            <el-button type="danger" round @click="handleRevocation(scope.row)">撤销申请</el-button>
+          </template>
+        </el-table-column>
 
         <el-table-column v-if="buttonShow" align="center" prop="operation" label="操作" width="200px">
           <template #default="scope">
@@ -62,8 +59,8 @@
         <el-tag type="success" size="large">已使用额度为 {{ usedMoney }} 万元</el-tag>
         <el-tag type="warning" size="large">可用额度为 {{ restMoney }} 万元</el-tag>
 
-        <el-form :model="applicationForm" style="width: 100%">
-          <el-form-item label="经费编号与经费名称" label-width="150px">
+        <el-form :model="applicationForm" ref="applicationFormRef" style="width: 100%" :rules="formRules">
+          <el-form-item label="经费编号与经费名称" prop=fundNameAndId label-width="150px">
             <el-select v-model="applicationForm.fundNameAndId" placeholder="请选择经费编号及名称" size="large"
                        style="width: 100%" clearable>
               <el-option
@@ -75,12 +72,12 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="支出金额" label-width="150px">
+          <el-form-item label="支出金额" prop=money label-width="150px">
             <el-input v-model="applicationForm.money" placeholder="支出金额不能大于可使用额度" clearable>
             </el-input>
           </el-form-item>
 
-          <el-form-item label="支出类别" label-width="150px">
+          <el-form-item label="支出类别" prop=category label-width="150px">
             <el-cascader v-model="applicationForm.category" :options="categories"
                          :props="{ expandTrigger: 'hover' }"
                          style="width: 100%" placeholder="请选择支出类别" clearable
@@ -105,6 +102,16 @@
         </div>
       </el-dialog>
     </div>
+
+    <div class="revocation">
+      <el-dialog v-model="dialogVisibleRevocation" width="35%" close-on-press-escape>
+        <span>确认撤销这条申请吗？</span>
+        <div style="text-align:right;margin-top: 5%">
+          <el-button type="primary" v-on:click="confirmRevocation()">确定</el-button>
+          <el-button @click="unRevocation()">退出</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -112,6 +119,15 @@
 export default {
   name: "ApplicationCheck",
   data() {
+    const validateMoney = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入支出金额"));
+      } else if (value > this.restMoney) {
+        callback(new Error("支出金额不能大于剩余金额"));
+      } else {
+        callback();
+      }
+    };
     return {
       pageSize: 5,//每页显示的行数,默认为2
       currentPage: 1,
@@ -123,6 +139,8 @@ export default {
       currentRow: 0,
       showData: "total",
       buttonShow: false,
+      buttonRevocation: false,
+      dialogVisibleRevocation: false,
       totalMoney: 0,
       usedMoney: 0,
       restMoney: 0,
@@ -142,9 +160,31 @@ export default {
         '高水平（G000XX）',
       ],
       categories: [],
+      formRules: {
+        fundNameAndId: [{required: true, message: '请选择基金名称和编号', trigger: 'blur'}],
+        money: [{required: true, validator: validateMoney, trigger: "blur"}],
+        category: [{required: true, message: '请选择支出类别', trigger: "blur"}],
+      },
     }
   },
   methods: {
+    confirmRevocation() {
+      const _this = this
+      this.$api.userAPI.deleteApplicationByID(this.currentRow.id).then(resp => {
+        _this.dialogVisibleRevocation = false
+        _this.$message({
+          showClose: true,
+          message: '撤销成功',
+          type: 'success'
+        });
+        _this.getApplications()
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    unRevocation() {
+      this.dialogVisibleRevocation = false
+    },
     getMoneyInfo() {
       const fundName = this.applicationForm.fundNameAndId.split("（")
       const _this = this
@@ -187,6 +227,11 @@ export default {
     },
     unModify() {
       this.dialogVisible = false;//对话框不显示
+    },
+    handleRevocation(row) {
+      this.dialogVisibleRevocation = true
+      this.currentRow = row
+      // console.log(this.currentRow.id)
     },
     handleModify(row) {
       this.dialogVisible = true
@@ -234,32 +279,27 @@ export default {
       }
     },
     confirmModify() {
-      const fundName = this.applicationForm.fundNameAndId.split("（")
-      const _this = this
-      // console.log(this.applicationForm.id)
-      // console.log(fundName[0])
-      // console.log(this.userId)
-      // console.log(this.selectedGroup)
-      // console.log(this.applicationForm.money)
-      // console.log(this.applicationForm.category[0])
-      // console.log(this.applicationForm.category[1])
-      // console.log(this.applicationForm.abstract)
-      // console.log(this.applicationForm.remarks)
-      this.$api.userAPI.applyFunding(parseInt(this.applicationForm.id), fundName[0],
-          this.userId, this.selectedGroup,
-          Number(this.applicationForm.money), this.applicationForm.category[0],
-          this.applicationForm.category[1], this.applicationForm.abstract,
-          this.applicationForm.remarks).then(resp => {
-        _this.dialogVisible = false
-        _this.$message({
-          showClose: true,
-          message: '您已成功提交',
-          type: 'success'
-        });
-        _this.getApplications()
-      }).catch(err => {
-        console.log(err);
-      });
+      this.$refs.applicationFormRef.validate(async valid => {
+        if (valid) {
+          const fundName = this.applicationForm.fundNameAndId.split("（")
+          const _this = this
+          this.$api.userAPI.applyFunding(parseInt(this.applicationForm.id), fundName[0],
+              this.userId, this.selectedGroup,
+              Number(this.applicationForm.money), this.applicationForm.category[0],
+              this.applicationForm.category[1], this.applicationForm.abstract,
+              this.applicationForm.remarks, this.showData).then(resp => {
+            _this.dialogVisible = false
+            _this.$message({
+              showClose: true,
+              message: '您已成功提交',
+              type: 'success'
+            });
+            _this.getApplications()
+          }).catch(err => {
+            console.log(err);
+          });
+        }
+      })
     },
     //用于表格分页的方法
     handleSizeChange(val) {
@@ -284,7 +324,8 @@ export default {
       this.getTotalCount()
     },
     showData(newValue, oldValue) {
-      this.buttonShow = newValue === "refuse";
+      this.buttonShow = newValue === "refuse" || newValue === "draft";
+      this.buttonRevocation = newValue === "pending";
       this.pageSize = 5;
       this.currentPage = 1;
       this.getTotalCount()
