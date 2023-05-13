@@ -10,11 +10,12 @@
     <div class="multi-total-table" v-if="showTable === 'multiTotalTable'">
       <!--      每个经费的使用情况 - 包含所有老师(系里)-->
       <h3>多项经费使用一览表</h3>
+      <div ref="multiTotalChartDom" id="multiTotalChart" style="width: 70%; height: 500px"></div>
       <el-table :data="multiTotalTableData" border style="width:100%"
                 :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
                 highlight-current-row>
         <el-table-column prop="code" label="经费编号"/>
-        <el-table-column prop="name" label="经费名称"/>
+        <el-table-column prop="fund_name" label="经费名称"/>
         <el-table-column prop="due_date" label="授权有效期"/>
         <el-table-column prop="total_sum" label="经费总额"/>
         <el-table-column prop="used_sum" label="已使用经费"/>
@@ -39,9 +40,10 @@
       <!--        <el-table-column prop="second_category" label="支出类别（二级）"/>-->
       <!--        <el-table-column prop="used_sum" label="可使用额度"/>-->
       <!--      </el-table>-->
+<!--      <div ref="multiDetailChartDom" id="multiDetailChart" style="width: 70%; height: 500px"></div>-->
       <el-collapse v-model="activeData">
-        <el-collapse-item v-for="(value, key, index) in aggregatedData" :title="key" :name="index">
-          <h4>{{ value[0].code }} - {{ value[0].name }} - {{ value[0].groups }}</h4>
+        <el-collapse-item v-for="(value, key, index) in tableAggregatedData" :title="key" :name="index">
+          <h4>{{ value[0].code }} - {{ value[0].fund_name }} - {{ value[0].group_name }}</h4>
           <h5>可使用经费总额：{{ value[0].total_sum }}</h5>
           <div v-for="item in value" :key="item">
             <el-descriptions>
@@ -57,7 +59,7 @@
     <div class="teacher-detail-table" v-if="showTable === 'teacherDetailTable'">
       <!--      每个老师每个经费的总体使用情况-->
       <h3>经费汇总表</h3>
-      <div ref="chartDom" id="barChart" style="width: 70%; height: 500px"></div>
+      <div ref="teacherDetailChartDom" id="teacherDetailChart" style="width: 70%; height: 500px"></div>
       <el-table :data="teacherDetailTableData" border style="width:100%"
                 :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
                 highlight-current-row>
@@ -86,9 +88,12 @@ export default {
       multiDetailTableData: [],
       teacherDetailTableData: [],
       activeData: '',
+      tableAggregatedData: {},
       aggregatedData: {},
+      fundNames: new Set()
     }
   },
+
   methods: {
     threeTableAPI() {
       let _this = this
@@ -96,6 +101,7 @@ export default {
         this.$api.adminAPI.calculateFundingSum().then(resp => {
           // console.log(resp)
           _this.multiTotalTableData = resp.data.data.funding_info;
+          _this.visualizeMultiTotalTable();
         }).catch(err => {
           console.log(err);
         });
@@ -104,7 +110,7 @@ export default {
           // console.log(resp)
           _this.multiDetailTableData = resp.data.data.funding_info;
           // console.log("明细", _this.multiDetailTableData)
-          _this.aggregateGroupInfo()
+          _this.aggregateTableData();
         }).catch(err => {
           console.log(err);
         });
@@ -112,6 +118,7 @@ export default {
         this.$api.adminAPI.calculateExpenditureSummary().then(resp => {
           // console.log(resp)
           _this.teacherDetailTableData = resp.data.data.funding_info;
+          _this.aggregateData(_this.teacherDetailTableData);
           _this.visualizeTeacherDetailTable();
         }).catch(err => {
           console.log(err);
@@ -119,23 +126,76 @@ export default {
       }
     },
 
-    aggregateGroupInfo() {
+    aggregateTableData() {
       for (const data of this.multiDetailTableData) {
-        let key = data.groups + "-" + data.name
-        if (this.aggregatedData.hasOwnProperty(key)) {
-          this.aggregatedData[key].push(data)
+        let key = data.group_name + " - " + data.fund_name
+        if (this.tableAggregatedData.hasOwnProperty(key)) {
+          this.tableAggregatedData[key].push(data)
         } else {
-          this.aggregatedData[key] = []
-          this.aggregatedData[key].push(data)
+          this.tableAggregatedData[key] = [data]
         }
       }
-      // console.log(this.aggregatedData)
     },
 
-    visualizeTeacherDetailTable() {
+    aggregateData(tableData) {
+      for (const data of tableData) {
+        let group_key = data.group_name;
+        let fund_key = data.fund_name;
+        this.fundNames.add(fund_key);
+        if (this.aggregatedData.hasOwnProperty(group_key)) {
+          if (this.aggregatedData[group_key].hasOwnProperty(fund_key)) {
+            this.aggregatedData[group_key][fund_key].push(data);
+          } else {
+            this.aggregatedData[group_key][fund_key] = [data];
+          }
+        } else {
+          this.aggregatedData[group_key] = [];
+          this.aggregatedData[group_key][fund_key] = [data];
+        }
+      }
+      console.log("Aggregated Data:", this.aggregatedData);
+    },
+
+    getMultiTotalTableSeries() {
+      let series = [];
+      let usedData = [];
+      let leftData = [];
+
+      for (const data of this.multiTotalTableData) {
+        this.fundNames.add(data.fund_name);
+        usedData.push(data.used_sum);
+        leftData.push(data.left_sum);
+      }
+
+      series.push(
+          {
+            name: 'Used',
+            type: 'bar',
+            stack: 'used',
+            emphasis: {
+              focus: 'series'
+            },
+            data: usedData
+          },
+          {
+            name: 'Left',
+            type: 'bar',
+            stack: 'left',
+            emphasis: {
+              focus: 'series'
+            },
+            data: leftData
+          }
+      )
+      return series;
+    },
+
+    visualizeMultiTotalTable() {
       let _this = this;
-      const chartDom = document.getElementById("barChart");
-      const chart = echarts.init(chartDom);
+      const multiTotalChartDom = document.getElementById("multiTotalChart");
+      const chart = echarts.init(multiTotalChartDom);
+      const series = _this.getMultiTotalTableSeries();
+      console.log(series)
       chart.setOption({
         tooltip: {
           trigger: 'axis',
@@ -153,7 +213,7 @@ export default {
         xAxis: [
           {
             type: 'category',
-            data: _this.teacherDetailTableData.map(item => item.group_name)
+            data: [..._this.fundNames]
           }
         ],
         yAxis: [
@@ -161,26 +221,84 @@ export default {
             type: 'value'
           }
         ],
-        series: [
-          {
-            name: 'Used',
-            type: 'bar',
-            stack: 'funding',
-            emphasis: {
-              focus: 'series'
+        series: series
+      })
+    },
+
+    getTeacherDetailTableSeries() {
+      let series = [];
+      for (const fundName of this.fundNames) {
+        let usedData = [];
+        let leftData = [];
+        for (const key of Object.keys(this.aggregatedData)) {
+          let data = this.aggregatedData[key];
+          if (data.hasOwnProperty(fundName)) {
+            usedData.push(data[fundName][0].used);
+            leftData.push(data[fundName][0].usable_left);
+          }
+          else {
+            usedData.push(0);
+            leftData.push(0);
+          }
+        }
+        series.push(
+            {
+              name: fundName + ' - Used',
+              type: 'bar',
+              stack: fundName,
+              emphasis: {
+                focus: 'series'
+              },
+              data: usedData
             },
-            data: _this.teacherDetailTableData.map(item => item.used)
-          },
+            {
+              name: fundName + ' - Left',
+              type: 'bar',
+              stack: fundName,
+              emphasis: {
+                focus: 'series'
+              },
+              data: leftData
+            }
+        )
+      }
+
+      console.log(series);
+      return series;
+    },
+
+    visualizeTeacherDetailTable() {
+      let _this = this;
+      const teacherDetailChartDom = document.getElementById("teacherDetailChart");
+      const chart = echarts.init(teacherDetailChartDom);
+      const series = _this.getTeacherDetailTableSeries();
+      console.log(series)
+      chart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {},
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
           {
-            name: 'Left',
-            type: 'bar',
-            stack: 'funding',
-            emphasis: {
-              focus: 'series'
-            },
-            data: _this.teacherDetailTableData.map(item => item.usable_left)
-          },
-        ]
+            type: 'category',
+            data: Object.keys(_this.aggregatedData)
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: series
       });
     }
   },
