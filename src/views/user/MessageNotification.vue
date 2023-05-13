@@ -1,9 +1,9 @@
 <template>
   <div class="messageNotification">
     <div class="background">
-      <!--    <div class="delete">-->
-      <!--      <el-button type="danger" icon="el-icon-delete" @click="deleteMessage()">全部删除</el-button>-->
-      <!--    </div>-->
+      <div class="delete">
+        <el-button type="danger" icon="el-icon-delete" @click="deleteMessage()">全部删除</el-button>
+      </div>
 
       <div class="messageNotif">
         <div class="message">
@@ -18,56 +18,56 @@
         </div>
       </div>
 
-      <!--    <div class="deleteMessage">-->
-      <!--      <el-dialog :visible.sync="dialogVisible" width="35%" close-on-press-escape v-dialogDrag>-->
-      <!--        <span>确定删除？</span>-->
-      <!--        <div style="text-align:right">-->
-      <!--          <el-button type="primary" v-on:click="dialogSave()">确定</el-button>-->
-      <!--          <el-button @click="dialogCancel()">退出</el-button>-->
-      <!--        </div>-->
-      <!--      </el-dialog>-->
-      <!--    </div>-->
+      <div class="deleteMessage">
+        <el-dialog v-model="dialogVisible" width="35%" close-on-press-escape>
+          <span>确定删除？</span>
+          <div style="text-align:right">
+            <el-button type="primary" v-on:click="dialogSave()">确定</el-button>
+            <el-button @click="dialogCancel()">退出</el-button>
+          </div>
+        </el-dialog>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+
 export default {
   name: "MessageNotification",
   data() {
     return {
       activities: [],
-      // dialogVisible: false,
+      dialogVisible: false,
     };
   },
-  // methods: {
-  //   dialogCancel() {
-  //     this.dialogVisible = false;//对话框不显示
-  //   },
-  //   dialogSave() {
-  //     const _this = this
-  //     this.$api.clientApi.deleteAllMessage(this.$store.getters.getUser.id).then(res => {
-  //       _this.activities = [
-  //         {
-  //           timestamp: "",
-  //           content: "没有任何通知哦~"
-  //         }
-  //       ]
-  //     }).catch(err => {
-  //       console.log(err);
-  //     });
-  //     this.dialogVisible = false;
-  //
-  //     this.$message({
-  //       showClose: true,
-  //       message: '删除成功',
-  //       type: 'success'
-  //     });
-  //   },
-  //   deleteMessage() {
-  //     this.dialogVisible = true;
-  //   }
-  // },
+  methods: {
+    dialogCancel() {
+      this.dialogVisible = false;//对话框不显示
+    },
+    dialogSave() {
+      const _this = this
+      this.$api.userAPI.deleteAllNotificationOfUser(parseInt(this.$store.getters.getUser.id)).then(resp => {
+        _this.activities = [
+          {
+            timestamp: "",
+            content: "没有任何通知哦~"
+          }
+        ]
+      }).catch(err => {
+        console.log(err);
+      });
+      this.dialogVisible = false;
+      this.$message({
+        showClose: true,
+        message: '删除成功',
+        type: 'success'
+      });
+    },
+    deleteMessage() {
+      this.dialogVisible = true;
+    }
+  },
   mounted() {
     const _this = this
     this.$api.userAPI.notifyUser(parseInt(this.$store.getters.getUser.id)).then(resp => {
@@ -76,8 +76,8 @@ export default {
       if (_this.activities.length === 0) {
         _this.activities = [
           {
-            timestamp: "",
-            content: "没有任何通知哦~"
+            date: "",
+            messages: "没有任何通知哦~"
           }
         ]
       }

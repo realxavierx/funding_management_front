@@ -16,6 +16,8 @@ import fundingManagement from "@/views/administrator/FundingManagement";
 import FundingManagement from "@/views/administrator/FundingManagement";
 import AdminHomePage from "@/views/administrator/AdminHomePage";
 import AdminMessageNotification from "@/views/administrator/AdminMessageNotification";
+import SetExecutionRate from "@/views/administrator/SetExecutionRate";
+import GroupDetails from "@/views/administrator/GroupDetails";
 
 //user
 import Application from "@/views/user/Application";
@@ -93,6 +95,14 @@ const routes = [
                 path: 'adminMessageNotification',
                 name: 'adminMessageNotification',
                 component: AdminMessageNotification
+            }, {
+                path: 'setExecutionRate',
+                name: 'setExecutionRate',
+                component: SetExecutionRate
+            }, {
+                path: 'groupDetails',
+                name: 'groupDetails',
+                component: GroupDetails
             }
         ]
     },

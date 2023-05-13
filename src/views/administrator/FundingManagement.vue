@@ -41,8 +41,8 @@
       <!--      </el-table>-->
       <el-collapse v-model="activeData">
         <el-collapse-item v-for="(value, key, index) in aggregatedData" :title="key" :name="index">
-          <h4>{{value[0].code}} - {{value[0].name}} - {{value[0].groups}}</h4>
-          <h5>可使用经费总额：{{value[0].total_sum}}</h5>
+          <h4>{{ value[0].code }} - {{ value[0].name }} - {{ value[0].groups }}</h4>
+          <h5>可使用经费总额：{{ value[0].total_sum }}</h5>
           <div v-for="item in value" :key="item">
             <el-descriptions>
               <el-descriptions-item width="33%" label="支出类别（一级）">{{ item.first_category }}</el-descriptions-item>
@@ -57,6 +57,7 @@
     <div class="teacher-detail-table" v-if="showTable === 'teacherDetailTable'">
       <!--      每个老师每个经费的总体使用情况-->
       <h3>经费汇总表</h3>
+      <div ref="chartDom" id="barChart" style="width: 70%; height: 500px"></div>
       <el-table :data="teacherDetailTableData" border style="width:100%"
                 :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
                 highlight-current-row>
@@ -74,9 +75,10 @@
 </template>
 
 <script>
+import * as echarts from "echarts";
+
 export default {
   name: "FundingManagement",
-
   data() {
     return {
       showTable: 'multiTotalTable',
@@ -110,6 +112,7 @@ export default {
         this.$api.adminAPI.calculateExpenditureSummary().then(resp => {
           // console.log(resp)
           _this.teacherDetailTableData = resp.data.data.funding_info;
+          _this.visualizeTeacherDetailTable();
         }).catch(err => {
           console.log(err);
         });
@@ -121,15 +124,67 @@ export default {
         let key = data.groups + "-" + data.name
         if (this.aggregatedData.hasOwnProperty(key)) {
           this.aggregatedData[key].push(data)
-        }
-        else {
+        } else {
           this.aggregatedData[key] = []
           this.aggregatedData[key].push(data)
         }
       }
       // console.log(this.aggregatedData)
+    },
+
+    visualizeTeacherDetailTable() {
+      let _this = this;
+      const chartDom = document.getElementById("barChart");
+      const chart = echarts.init(chartDom);
+      chart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {},
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: _this.teacherDetailTableData.map(item => item.group_name)
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            name: 'Used',
+            type: 'bar',
+            stack: 'funding',
+            emphasis: {
+              focus: 'series'
+            },
+            data: _this.teacherDetailTableData.map(item => item.used)
+          },
+          {
+            name: 'Left',
+            type: 'bar',
+            stack: 'funding',
+            emphasis: {
+              focus: 'series'
+            },
+            data: _this.teacherDetailTableData.map(item => item.usable_left)
+          },
+        ]
+      });
     }
   },
+
   mounted() {
     this.threeTableAPI()
   }

@@ -27,7 +27,7 @@
         <div style="flex-basis: 50%">
           <div class="container">
             <div class="title" style="text-align: center;flex:1">经费使用情况</div>
-            <el-button type="success" round @click="viewDetails()" class="button">
+            <el-button type="success" round @click="viewDetails(info.group_name)" class="button">
               查看详情
             </el-button>
 
@@ -62,7 +62,6 @@ export default {
       queryForm: {
         groupName: "",
       },
-
       information: [
         {
           group_name: "唐博",
@@ -97,10 +96,49 @@ export default {
   },
   methods: {
     conditionQuery() {
+      let _this = this
+      if (this.queryForm.groupName !== "") {
+        this.$api.adminAPI.queryFundingInfo(this.queryForm.groupName).then(resp => {
+          console.log(resp)
+          _this.information = resp.data.data.funding_info
+          if (_this.information.length === 0) {
+            _this.$message({
+              message: "未查询到相关信息",
+              type: "error"
+            })
+          } else {
+            _this.information.forEach((info, index) => {
+              const chartDom = document.getElementById(`chart_${index}`);
+              const chart = echarts.init(chartDom);
+              chart.setOption({
+                title: {
+                  left: 'center', // 标题左侧距离为图表区域的中心
+                  top: 0, // 标题顶部距离为图表区域高度的一半
+                },
+                tooltip: {},
+                series: [{
+                  type: 'pie',
+                  data: info.fundings,
+                }],
+              });
+            });
+          }
+        }).catch(err => {
+          console.log(err);
+        });
+      } else {
+        window.location.reload()
+      }
     },
-    viewDetails() {
-
-    }
+    viewDetails(name) {
+      console.log(name)
+      this.$router.push({
+        name: "groupDetails",
+        query: {
+          group_name: name
+        }
+      });
+    },
   },
   mounted() {
     let _this = this
@@ -127,8 +165,6 @@ export default {
     }).catch(err => {
       console.log(err);
     });
-
-
   }
 }
 </script>

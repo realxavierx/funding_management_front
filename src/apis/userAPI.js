@@ -117,6 +117,17 @@ export function notifyUser(id) {
     })
 }
 
+
+export function deleteAllNotificationOfUser(id) {
+    return request({
+        method: 'GET',
+        url: '/notification/deleteAllNotificationOfUser',
+        params: {
+            id: id
+        }
+    })
+}
+
 export function getApplicationsByGroup(group, limit, offset, status) {
     return request({
         method: 'GET',

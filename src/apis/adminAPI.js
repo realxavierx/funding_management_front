@@ -7,6 +7,16 @@ export function getAllFundingInfo() {
     })
 }
 
+export function queryFundingInfo(group) {
+    return request({
+        method: 'GET',
+        url: '/funding/queryFundingInfo',
+        params: {
+            group: group
+        }
+    })
+}
+
 export function getApplications(limit, offset, status) {
     return request({
         method: 'GET',

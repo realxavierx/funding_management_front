@@ -8,6 +8,7 @@
         <el-menu-item index="/admin/groupManagement">课题组管理</el-menu-item>
         <el-menu-item index="/admin/fundingManagement">经费管理</el-menu-item>
         <el-menu-item index="/admin/applicationManagement">报销申请管理</el-menu-item>
+        <el-menu-item index="/admin/setExecutionRate">执行率设置</el-menu-item>
 
         <el-menu-item index="/admin/adminMessageNotification">
           <template v-slot:title>
