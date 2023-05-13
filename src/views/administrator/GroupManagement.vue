@@ -106,7 +106,6 @@ export default {
     let _this = this
     this.information = []
     this.$api.adminAPI.getAllFundingInfo().then(resp => {
-      // console.log(resp.data.data.funding_info)
       _this.information = resp.data.data.funding_info
       _this.$nextTick(() => {
         _this.information.forEach((info, index) => {
