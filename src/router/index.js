@@ -25,6 +25,8 @@ import UserHomePage from "@/views/user/UserHomePage";
 import GroupPage from "@/views/user/GroupPage";
 import MessageNotification from "@/views/user/MessageNotification";
 import ApplicationCheck from "@/views/user/ApplicationCheck";
+import userCenter from "@/views/user/UserCenter";
+import UserCenter from "@/views/user/UserCenter";
 
 const routes = [
     {
@@ -127,11 +129,16 @@ const routes = [
                 path: 'messageNotification',
                 name: ' messageNotification',
                 component: MessageNotification
-            }, {
+            },
+            {
                 path: 'applicationCheck',
                 name: 'applicationCheck',
                 component: ApplicationCheck
-
+            },
+            {
+                path: 'userCenter',
+                name: 'userCenter',
+                component: UserCenter
             }
         ]
     },

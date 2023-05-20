@@ -28,6 +28,7 @@ export default {
   mounted() {
     this.path = this.$route.path;
   },
+
   watch: {
     $route(to, from) {
       this.path = to.path

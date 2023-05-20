@@ -250,6 +250,7 @@ export default {
             data: leftData
           }
       )
+
       return series;
     },
 

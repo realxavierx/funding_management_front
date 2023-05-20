@@ -17,6 +17,8 @@
           </template>
         </el-menu-item>
 
+        <el-menu-item index="/user/userCenter">个人中心</el-menu-item>
+
         <el-submenu index="" v-if="isLogin">
           <template v-slot:title>
             <i class="el-icon-user"></i>

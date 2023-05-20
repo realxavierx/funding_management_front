@@ -6,6 +6,7 @@ import installElementPlus from './plugins/element'
 import VueParticles from 'vue-particles'
 import api from './apis'
 import vue3JsonExcel from "vue3-json-excel"
+import 'pattern.css/dist/pattern.min.css';
 
 const app = createApp(App)
 installElementPlus(app)
