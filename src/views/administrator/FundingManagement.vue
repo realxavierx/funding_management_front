@@ -12,7 +12,7 @@
         <el-button type="success" @click="exportData">导出表格</el-button>
       </template>
       <template #default>
-        <p>您确定要导出学生成绩吗?</p>
+        <p>您确定要导出数据吗?</p>
         <vue3-json-excel
             :json-data="excelData"
             :name="excelName"
@@ -25,52 +25,51 @@
 
     <div class="multi-total-table" v-if="showTable === 'multiTotalTable'">
       <!--      每个经费的使用情况 - 包含所有老师(系里)-->
-      <h3>多项经费使用一览表</h3>
       <div ref="multiTotalChartDom" id="multiTotalChart" style="width: 70%; height: 500px;margin:auto"></div>
-      <el-table :data="multiTotalTableData" border style="width:100%"
-                :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
-                highlight-current-row>
-        <el-table-column prop="code" label="经费编号"/>
-        <el-table-column prop="fund_name" label="经费名称"/>
-        <el-table-column prop="due_date" label="授权有效期"/>
-        <el-table-column prop="total_sum" label="经费总额"/>
-        <el-table-column prop="used_sum" label="已使用经费"/>
-        <el-table-column prop="left_sum" label="经费余额"/>
-        <el-table-column prop="days_left" label="剩余时间天数"/>
-        <el-table-column prop="current_execution_rate" label="当前执行率"/>
-        <el-table-column prop="qualified" label="当前是否达标"/>
+      <div class="table">
+        <el-button type="primary" @click="handleRefresh()">刷新金额</el-button>
+        <el-table :data="multiTotalTableData" border style="margin-bottom:3%"
+                  :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
+                  highlight-current-row>
+          <el-table-column prop="code" label="经费编号"/>
+          <el-table-column prop="fund_name" label="经费名称"/>
+          <el-table-column prop="due_date" label="授权有效期"/>
+          <el-table-column prop="total_sum" label="经费总额"/>
+          <el-table-column prop="used_sum" label="已使用经费"/>
+          <el-table-column prop="left_sum" label="经费余额"/>
+          <el-table-column prop="days_left" label="剩余时间天数"/>
+          <el-table-column prop="current_execution_rate" label="当前执行率"/>
+          <el-table-column prop="qualified" label="当前是否达标"/>
 
-        <!--        <el-table-column prop="qualified_rate" label="标准执行率"/>-->
-        <el-table-column prop="qualified_rate" label="标准执行率">
-          <template #default="scope">
-            <template v-if="editRow && editRow.code === scope.row.code">
-              <el-input v-model="editRow.qualified_rate"/>
+          <el-table-column prop="qualified_rate" label="标准执行率">
+            <template #default="scope">
+              <template v-if="editRow && editRow.code === scope.row.code">
+                <el-input v-model="editRow.qualified_rate"/>
+              </template>
+              <template v-else>
+                <span>{{ scope.row.qualified_rate }}</span>
+              </template>
             </template>
-            <template v-else>
-              <span>{{ scope.row.qualified_rate }}</span>
-            </template>
-          </template>
-        </el-table-column>
+          </el-table-column>
 
-        <el-table-column align="center" prop="operation" label="操作" width="200px">
-          <template #default="scope">
-            <!--            <el-button type="success" round @click="handleEdit(scope.row)">修改执行率</el-button>-->
-            <template v-if="editRow && editRow.code === scope.row.code">
-              <el-button type="primary" round @click="handleConfirmEdit(scope.row)">确认</el-button>
-              <el-button type="danger" round @click="handleCancleEdit()">取消</el-button>
+          <el-table-column align="center" prop="operation" label="操作" width="200px">
+            <template #default="scope">
+              <template v-if="editRow && editRow.code === scope.row.code">
+                <el-button type="primary" round @click="handleConfirmEdit(scope.row)">确认</el-button>
+                <el-button type="danger" round @click="handleCancleEdit()">取消</el-button>
+              </template>
+              <template v-else>
+                <el-button type="success" round @click="handleEdit(scope.row)">修改执行率</el-button>
+              </template>
             </template>
-            <template v-else>
-              <el-button type="success" round @click="handleEdit(scope.row)">修改执行率</el-button>
-            </template>
-          </template>
-        </el-table-column>
+          </el-table-column>
 
-      </el-table>
+        </el-table>
+      </div>
     </div>
 
     <div class="multi-detail-table" v-if="showTable === 'multiDetailTable'">
       <!--      每个老师每个经费的具体使用的用处  XX经费授权明细-->
-      <h3>经费授权明细一览表</h3>
       <!--      <el-table :data="multiDetailTableData" border style="width:100%"-->
       <!--                :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"-->
       <!--                highlight-current-row>-->
@@ -83,8 +82,10 @@
       <!--        <el-table-column prop="used_sum" label="可使用额度"/>-->
       <!--      </el-table>-->
       <!--      <div ref="multiDetailChartDom" id="multiDetailChart" style="width: 70%; height: 500px"></div>-->
+
       <el-collapse v-model="activeData">
-        <el-collapse-item v-for="(value, key, index) in tableAggregatedData" :title="key" :name="index">
+        <el-collapse-item v-for="(value, key, index) in tableAggregatedData" :title="key" :name="index"
+                          class="collapse">
           <h4>{{ value[0].code }} - {{ value[0].fund_name }} - {{ value[0].group_name }}</h4>
           <h5>可使用经费总额：{{ value[0].total_sum }}</h5>
           <div v-for="item in value" :key="item">
@@ -100,9 +101,8 @@
 
     <div class="teacher-detail-table" v-if="showTable === 'teacherDetailTable'">
       <!--      每个老师每个经费的总体使用情况-->
-      <h3>经费汇总表</h3>
       <div ref="teacherDetailChartDom" id="teacherDetailChart" style="width: 70%; height: 500px;margin:auto"></div>
-      <el-table :data="teacherDetailTableData" border style="width:100%"
+      <el-table :data="teacherDetailTableData" border style="width:80%;margin:auto"
                 :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
                 highlight-current-row>
         <el-table-column prop="code" label="经费编号"/>
@@ -120,7 +120,6 @@
 
 <script>
 import * as echarts from "echarts";
-import {updateExecutionRate} from "@/apis/adminAPI";
 
 export default {
   name: "FundingManagement",
@@ -141,8 +140,22 @@ export default {
       editRow: "",
     }
   },
-
   methods: {
+    handleRefresh() {
+      const _this = this
+      this.$api.adminAPI.updateTotalMoneyByExecutionRate().then(resp => {
+        _this.$api.adminAPI.calculateFundingSum().then(resp => {
+          console.log(resp)
+          _this.multiTotalTableData = resp.data.data.funding_info;
+          _this.visualizeMultiTotalTable();
+          _this.nowData = _this.multiTotalTableData;
+        }).catch(err => {
+          console.log(err);
+        });
+      }).catch(err => {
+        console.log(err);
+      });
+    },
     handleCancleEdit() {
       this.editRow = "";
     },
@@ -162,8 +175,11 @@ export default {
       let _this = this
       if (this.showTable === 'multiTotalTable') {
         this.$api.adminAPI.calculateFundingSum().then(resp => {
-          console.log(resp)
           _this.multiTotalTableData = resp.data.data.funding_info;
+          for (const ele of _this.multiTotalTableData) {
+            ele.days_left = Math.ceil((new Date(ele.due_date) - new Date()) / (1000 * 60 * 60 * 24));
+            console.log(ele.days_left)
+          }
           _this.visualizeMultiTotalTable();
           _this.nowData = _this.multiTotalTableData;
         }).catch(err => {
@@ -324,7 +340,6 @@ export default {
             }
         )
       }
-
       console.log(series);
       return series;
     },
@@ -366,8 +381,6 @@ export default {
 
     exportData() {
       this.excelData = [];
-
-
       if (this.showTable === "multiTotalTable") {
         this.excelName = "多项经费使用一览表.xls";
         this.excelFields = {
@@ -453,5 +466,13 @@ export default {
 </script>
 
 <style scoped>
+.table {
+  margin: auto;
+  width: 80%;
+}
 
+.multi-detail-table {
+  width: 80%;
+  margin: 3% auto;
+}
 </style>

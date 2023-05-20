@@ -9,11 +9,11 @@
 
     <div ref="useOfFundChartDom" id="useOfFundChart" style="width: 70%; height: 500px; margin:auto"></div>
 
-    <el-table :data="tableData" border style="width:100%"
+    <el-table :data="tableData" border style="width:80%;margin: 3% auto 3%;"
               :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
               highlight-current-row>
       <el-table-column prop="code" label="经费编号"/>
-      <el-table-column prop="name" label="经费名称"/>
+      <el-table-column prop="fund_name" label="经费名称"/>
       <el-table-column prop="due_date" label="经费授权有效期"/>
       <el-table-column prop="total_sum" label="经费总额"/>
       <el-table-column prop="used_sum" label="已使用经费"/>
@@ -43,6 +43,7 @@ export default {
     groupChange() {
       const _this = this
       this.$api.userAPI.calculateExpenditureSummaryUser(this.selectedGroup).then(resp => {
+        console.log(resp)
         _this.tableData = resp.data.data.funding_info;
         _this.visualizeChart();
       }).catch(err => {

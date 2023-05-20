@@ -7,38 +7,27 @@
 
     <div>
       <el-card v-for="member in groupMembers" :key="member.sid" style="width:80%;margin:auto">
-        <el-card style="height: 250px">
+        <el-card style="height: 200px">
           <el-row>
             <el-col :span="8">
               <el-avatar style="margin-top: 10px; margin-left: 20px" :size="140" :src="require('@/assets/team.png')"/>
             </el-col>
-            <el-col :span="1"></el-col>
             <el-col :span="14">
-              <el-row>
-                <h4>{{ member.sid }}</h4>
-              </el-row>
+<!--              <el-row>-->
+<!--                <h4>{{ member.sid }}</h4>-->
+<!--              </el-row>-->
               <el-row>
                 <el-col :span="24">
+                  <h4>{{ member.sid }}</h4>
                   <p>Role: {{ member.role }}</p>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="24">
                   <p>Name: {{ member.name }}</p>
                 </el-col>
               </el-row>
-              <el-row>
-                <!--                  <el-col :span="12">-->
-                <!--                    <el-tag style="margin-left: 8px; margin-top: 7px; width: 120px; height: 40px; font-size: 18px"-->
-                <!--                            type="success" v-if="user.online === 'True'">-->
-                <!--                      Online-->
-                <!--                    </el-tag>-->
-                <!--                    <el-tag style="margin-left: 8px; margin-top: 7px; width: 120px; height: 40px; font-size: 18px"-->
-                <!--                            type="info" v-if="user.online === 'False'">-->
-                <!--                      Offline-->
-                <!--                    </el-tag>-->
-                <!--                  </el-col>-->
-              </el-row>
+<!--              <el-row>-->
+<!--                <el-col :span="24">-->
+<!--                  <p>Name: {{ member.name }}</p>-->
+<!--                </el-col>-->
+<!--              </el-row>-->
             </el-col>
           </el-row>
         </el-card>

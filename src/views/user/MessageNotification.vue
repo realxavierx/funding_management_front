@@ -50,8 +50,8 @@ export default {
       this.$api.userAPI.deleteAllNotificationOfUser(parseInt(this.$store.getters.getUser.id)).then(resp => {
         _this.activities = [
           {
-            timestamp: "",
-            content: "没有任何通知哦~"
+            date: "",
+            messages: "没有任何通知哦~"
           }
         ]
       }).catch(err => {

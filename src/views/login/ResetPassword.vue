@@ -11,19 +11,12 @@
         <div class="login_box">
           <!-- 表单区域 -->
           <h1>请重置密码</h1>
-
           <el-form class="login_form" ref="loginFormRef" :model="loginForm" :rules="loginRules"
                    :v-model="submitLoginForm" @keyup.enter.native="submitLoginForm()">
-
             <!-- 账号 -->
             <el-form-item label="账号" prop="id" label-width="100px">
               <el-input class="in" v-model="loginForm.id" prefix-icon="iconfont icon-denglu"
                         placeholder="请输入账号">
-              </el-input>
-            </el-form-item>
-            <el-form-item label="电话号" prop="phone" label-width="100px">
-              <el-input class="in" v-model="loginForm.phone" prefix-icon="iconfont icon-shouji"
-                        placeholder="请输入电话号">
               </el-input>
             </el-form-item>
             <!-- 密码 -->
@@ -39,10 +32,10 @@
             </el-form-item>
 
             <!-- 按钮 -->
-            <el-form-item class="btns">
+            <div class="btns">
               <el-button type="primary" @click="submitLoginForm()">确定</el-button>
               <el-button type="info" @click="resetLoginForm()">重置</el-button>
-            </el-form-item>
+            </div>
           </el-form>
         </div>
       </div>
@@ -75,25 +68,12 @@ export default {
         callback();
       }
     };
-    var validatePhone = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入电话号"));
-      } else {
-        var reg = /^1[3456789]\d{9}$/;
-        if (!reg.test(value)) {
-          callback(new Error("请输入正确的电话号"));
-        } else {
-          callback();
-        }
-      }
-    };
     return {
       //表单数据
       loginForm: {
         id: "",
         password: "",
         checkPass: "",
-        phone: "",
       },
       //指定验证规则
       loginRules: {
@@ -105,7 +85,6 @@ export default {
         //校验密码
         password: [{required: true, validator: validatePass, trigger: "blur"}],
         checkPass: [{required: true, validator: validatePass2, trigger: "blur"}],
-        phone: [{required: true, validator: validatePhone, trigger: "blur"}],
       },
     };
 
@@ -116,18 +95,14 @@ export default {
     },
     submitLoginForm() {
       this.$refs.loginFormRef.validate(async valid => {
-        //1.验证失败则结束
-        if (!valid) {
-          return;
-        } else {
-          this.$api.loginApi.forgetPassword(this.loginForm.id,
-              this.loginForm.password, this.loginForm.phone)
-              .then(res => {
-                console.log("success");
-                console.log(res.data);
-                if (res.data.code == 6000) {
+        if (valid) {
+          this.$api.loginAPI.modifyPasswd(this.loginForm.id, this.loginForm.password)
+              .then(resp => {
+                console.log(resp)
+                console.log(resp.data.data.result)
+                if (resp.data.data.result === false) {
                   this.$message({
-                    message: res.data.message,
+                    message: "用户不存在，请重新输入账号",
                     type: "error"
                   });
                 } else {
@@ -139,18 +114,14 @@ export default {
         }
       })
     },
-    getVerifyCode() {
-
-    }
   },
-
 }
 </script>
 
 <style scoped>
 .login_box {
   width: 40%;
-  height: 60%;
+  height: 50%;
   border-radius: 20px;
   position: absolute;
   left: 50%;
@@ -169,11 +140,10 @@ export default {
 
 .login_form {
   position: absolute;
-  bottom: 0%;
+  margin-top: 5%;
   width: 100%;
   border: 20px;
 }
-
 
 .in {
   margin-left: 10%;

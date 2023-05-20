@@ -4,6 +4,7 @@
              @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
 
       <div class="navbar-container">
+        <el-menu-item index="/admin/allocateMoney">课题组金额分配</el-menu-item>
         <el-menu-item index="/admin/userManagement">用户（权限）管理</el-menu-item>
         <el-menu-item index="/admin/groupManagement">课题组管理</el-menu-item>
         <el-menu-item index="/admin/fundingManagement">经费管理</el-menu-item>

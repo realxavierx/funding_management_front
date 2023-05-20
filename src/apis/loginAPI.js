@@ -18,7 +18,7 @@ export function login(id, password) {
     })
 }
 
-export function register(name, id, password, role, email) {
+export function register(name, id, password, email, role) {
     return request({
         method: 'POST',
         url: '/user/register',
@@ -28,6 +28,24 @@ export function register(name, id, password, role, email) {
             password: password,
             role: role,
             email: email
+        },
+        transformRequest: [function (data) {
+            let str = '';
+            for (let key in data) {
+                str += encodeURIComponent(key) + '=' + encodeURIComponent(data[key]) + '&';
+            }
+            return str;
+        }]
+    })
+}
+
+export function modifyPasswd(id, password) {
+    return request({
+        method: 'POST',
+        url: '/user/modifyPasswd',
+        data: {
+            sid: id,
+            password: password
         },
         transformRequest: [function (data) {
             let str = '';

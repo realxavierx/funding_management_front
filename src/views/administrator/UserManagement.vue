@@ -5,7 +5,7 @@
     <div class="user-table">
       <el-row>
         <el-col v-for="user in users" :key="user.sid" :span="12">
-          <el-card style="height: 250px">
+          <el-card style="height: 250px;width:95%;margin:auto">
             <el-row>
               <el-col :span="8">
                 <el-avatar style="margin-top: 10px; margin-left: 20px" :size="140"
@@ -115,5 +115,7 @@ export default {
 </script>
 
 <style scoped>
-
+.user-table {
+  margin-bottom: 4%
+}
 </style>

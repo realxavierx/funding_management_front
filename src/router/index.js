@@ -16,6 +16,7 @@ import FundingManagement from "@/views/administrator/FundingManagement";
 import AdminHomePage from "@/views/administrator/AdminHomePage";
 import AdminMessageNotification from "@/views/administrator/AdminMessageNotification";
 import GroupDetails from "@/views/administrator/GroupDetails";
+import AllocateMoney from "@/views/administrator/AllocateMoney";
 
 //user
 import Application from "@/views/user/Application";
@@ -94,6 +95,10 @@ const routes = [
                 path: 'groupDetails',
                 name: 'groupDetails',
                 component: GroupDetails
+            }, {
+                path: 'allocateMoney',
+                name: 'allocateMoney',
+                component: AllocateMoney
             }
         ]
     },

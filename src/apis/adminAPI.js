@@ -102,3 +102,9 @@ export function updateExecutionRate(code, rate) {
     })
 }
 
+export function updateTotalMoneyByExecutionRate() {
+    return request({
+        method: 'GET',
+        url: '/funding/updateTotalMoneyByExecutionRate',
+    })
+}

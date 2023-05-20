@@ -136,19 +136,20 @@ export default {
         //1.验证失败则结束
         if (valid) {
           this.$api.loginAPI.register(this.loginForm.name, this.loginForm.id,
-              this.loginForm.password, this.loginForm.email).then(resp => {
-            console.log(resp)
-            if (resp.data.code === 200) {
+              this.loginForm.password, this.loginForm.email, "default").then(resp => {
+            if (resp.data.data.result === true) {
               _this.$message({
                 message: "您已成功注册，请等待管理员审批",
                 type: "success"
               })
             }
+            if (resp.data.data.result === false) {
+              _this.$message({
+                message: "该工号已存在，请重新输入",
+                type: "error"
+              })
+            }
           }).catch(err => {
-            _this.$message({
-              message: "该工号已存在，请重新输入",
-              type: "error"
-            })
             console.log(err);
           });
         }

@@ -207,4 +207,8 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
+.card {
+  margin-bottom: 5%
+}
 </style>
