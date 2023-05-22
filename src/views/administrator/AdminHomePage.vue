@@ -39,10 +39,18 @@ export default {
   },
 
   mounted() {
-    let state = JSON.parse(sessionStorage.getItem("state"));
-    this.user = JSON.parse(JSON.stringify(state.user));
-    console.log(this.user);
-    this.startTypingAnimation();
+    let state = sessionStorage.getItem("state");
+
+    if (state === null) {
+      this.$router.push({path: "/"});
+    }
+    else {
+      state = JSON.parse(state);
+      this.user = JSON.parse(JSON.stringify(state.user));
+      console.log(this.user);
+      this.startTypingAnimation();
+      this.getAllOnlineUsers()
+    }
   },
 
   methods: {
@@ -94,7 +102,7 @@ export default {
         if (currentText >= textToType.length) {
           clearInterval(typingInterval);
         }
-      }, 100); // Adjust the typing speed by changing the interval delay (in milliseconds)
+      }, 50); // Adjust the typing speed by changing the interval delay (in milliseconds)
     }
   },
 }

@@ -53,6 +53,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     const validateId = (rule, value, callback) => {
@@ -88,9 +89,16 @@ export default {
     };
   },
   methods: {
+    updateOnline() {
+      this.$api.userAPI.updateOnline(parseInt(this.loginForm.id), true).then(resp => {
+        console.log(resp);
+      })
+    },
+
     resetLoginForm() {//重置用户名和密码方法
       this.$refs.loginFormRef.resetFields();
     },
+
     submitLoginForm() {
       const _this = this
       this.$refs.loginFormRef.validate(async valid => {
@@ -120,6 +128,7 @@ export default {
               } else {
                 this.$router.push({path: "/user/userHomePage"});
               }
+              _this.updateOnline();
             }
           }).catch(err => {
             console.log(err);

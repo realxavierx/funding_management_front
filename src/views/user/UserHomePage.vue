@@ -115,7 +115,7 @@ export default {
         if (currentText >= textToType.length) {
           clearInterval(typingInterval);
         }
-      }, 100); // Adjust the typing speed by changing the interval delay (in milliseconds)
+      }, 50); // Adjust the typing speed by changing the interval delay (in milliseconds)
     }
   },
 

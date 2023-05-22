@@ -7,6 +7,8 @@
 
 <script>
 
+import {ElMessage} from "element-plus";
+
 export default {
   name: 'app',
 }
@@ -20,14 +22,15 @@ body {
 }
 
 #app {
-  background-color: #c9c9e7;
+  background-color: #edede1;
   opacity: 1;
-  background-image:  repeating-radial-gradient( circle at 0 0, transparent 0, #c9c9e7 34px ), repeating-linear-gradient( #e5e6f555, #e5e6f5 );
+  background-image: radial-gradient(#e7b6f9 1.5px, transparent 1.5px), radial-gradient(#e7b6f9 1.5px, #edede1 1.5px);
+  background-size: 60px 60px;
+  background-position: 0 0, 30px 30px;
 
   width: 100%;
   height: 100%;
-  background-size: 100% 100%;
-  position:fixed;
+  position: fixed;
   overflow: auto;
 }
 

@@ -7,6 +7,73 @@ export function getAllUsers() {
     })
 }
 
+export function getUserById(sid) {
+    return request({
+        method: 'GET',
+        url: '/user/getUserInfo',
+        params: {
+            userid: sid
+        }
+    })
+}
+
+export function getUserGroup(sid) {
+    return request({
+        method: 'GET',
+        url: '/user/getGroupInfo',
+        params: {
+            userid: sid
+        }
+    })
+}
+
+export function addUserGroup(sid, group) {
+    return request({
+        method: 'GET',
+        url: '/user/insertGroup',
+        params: {
+            group: group,
+            userid: sid
+        }
+    })
+}
+
+export function updateAvatar(sid, avatar) {
+    return request({
+        method: 'POST',
+        url: '/user/updateAvatar',
+        data: {
+            userid: sid,
+            avatar: avatar
+        },
+        transformRequest: [function (data) {
+            let str = '';
+            for (let key in data) {
+                str += encodeURIComponent(key) + '=' + encodeURIComponent(data[key]) + '&';
+            }
+            return str;
+        }]
+    })
+}
+
+export function updateOnline(sid, online) {
+    return request({
+        method: 'GET',
+        url: '/user/updateOnline',
+        params: {
+            userid: sid,
+            online: online
+        }
+    })
+}
+
+export function getOnlineUsers() {
+    return request({
+        method: 'GET',
+        url: '/user/getOnlineUsers',
+    })
+}
+
 export function deleteUser(id) {
     return request({
         method: 'GET',

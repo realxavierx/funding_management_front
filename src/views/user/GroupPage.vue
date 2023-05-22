@@ -10,7 +10,8 @@
         <el-card style="height: 200px">
           <el-row>
             <el-col :span="8">
-              <el-avatar style="margin-top: 10px; margin-left: 20px" :size="140" :src="require('@/assets/team.png')"/>
+              <el-avatar style="margin-top: 10px; margin-left: 20px" :size="140"
+                         :src="member.avatar !== null? member.avatar: require('@/assets/team.png')"/>
             </el-col>
             <el-col :span="14">
 <!--              <el-row>-->

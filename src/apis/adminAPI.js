@@ -1,5 +1,35 @@
 import request from '../utils/request';
 
+export function getFundsInfo() {
+    return request({
+        method: 'GET',
+        url: '/manager/getFundsInfo'
+    })
+}
+
+export function allocateMoney(group_name, fund_name, total) {
+    return request({
+        method: 'GET',
+        url: '/manager/moneyAllocation',
+        params: {
+            group_name: group_name,
+            fund_name: fund_name,
+            total: total
+        }
+    })
+}
+
+export function allocateFund(code, total) {
+    return request({
+        method: 'GET',
+        url: '/manager/totalMoneyAllocation',
+        params: {
+            code: code,
+            total: total
+        }
+    })
+}
+
 export function getAllFundingInfo() {
     return request({
         method: 'GET',

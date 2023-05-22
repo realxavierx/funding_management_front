@@ -217,7 +217,7 @@ export default {
     },
     handleClear() {
       this.applicationForm = {
-        fundNameAndId: "",
+        fund: "",
         group: "",
         money: "",
         category: "",

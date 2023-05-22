@@ -35,23 +35,37 @@
 
 
 <script>
+import {ElMessage} from "element-plus";
+
 export default {
   data() {
     return {
       isLogin: false,
       role: "",
-      name: ""
+      name: "",
+      sid: ""
     }
   },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
+
     handleClose(key, keyPath) {
       console.log(key, keyPath);
     },
+
+    updateOnline() {
+      this.$api.userAPI.updateOnline(this.sid, false).then(resp => {
+        if (resp.data.code === 200) {
+          ElMessage.info("您已退出登录！")
+        }
+      })
+    },
+
     logOut() {
       this.isLogin = false
+      this.updateOnline();
       sessionStorage.removeItem('state')
       this.$message({
         showClose: true,
@@ -63,9 +77,10 @@ export default {
   mounted() {
     //用state判断，防止显示出错误
     if (sessionStorage.getItem('state')) {
-      this.isLogin = true
-      this.role = JSON.parse(sessionStorage.getItem('state')).user.role
-      this.name = JSON.parse(sessionStorage.getItem('state')).user.name
+      this.isLogin = true;
+      this.role = JSON.parse(sessionStorage.getItem('state')).user.role;
+      this.name = JSON.parse(sessionStorage.getItem('state')).user.name;
+      this.sid = JSON.parse(sessionStorage.getItem('state')).user.id;
     }
   },
 }

@@ -18,7 +18,7 @@
       <el-table-column prop="total_sum" label="经费总额"/>
       <el-table-column prop="used_sum" label="已使用经费"/>
       <el-table-column prop="left_sum" label="经费余额"/>
-      <el-table-column prop="days_left" label="剩余天数"/>
+      <el-table-column prop="days_left" label="剩余时间天数"/>
       <el-table-column prop="current_execution_rate" label="当前执行率"/>
       <el-table-column prop="qualified" label="当前是否达标"/>
     </el-table>
@@ -36,6 +36,9 @@ export default {
       user: this.$store.getters.getUser,
       selectedGroup: this.$store.getters.getUser.groupName[0],
       fundNames: new Set(),
+      excelName: '',
+      excelFields: '',
+      excelData: [],
     }
   },
 
@@ -120,7 +123,34 @@ export default {
       })
     },
 
-
+    exportData() {
+      this.excelData = [];
+      this.excelName = "课题组经费使用情况表.xls";
+      this.excelFields = {
+        "经费编号": "code",
+        "经费名称": "fund_name",
+        "经费授权有效期": "due_date",
+        "经费总额": "total_sum",
+        "已使用经费": "used_sum",
+        "经费余额": "left_sum",
+        "剩余时间天数": "days_left",
+        "当前执行率": "current_execution_rate",
+        "当前执行率是否达标": "qualified",
+      };
+      for (const data of this.tableData) {
+        this.excelData.push({
+          code: data.code,
+          fund_name: data.fund_name,
+          due_date: data.due_date,
+          total_sum: data.total_sum,
+          used_sum: data.used_sum,
+          left_sum: data.left_sum,
+          days_left: data.days_left,
+          current_execution_rate: data.current_execution_rate,
+          qualified: data.qualified,
+        })
+      }
+    },
   },
   mounted() {
     this.groupChange()

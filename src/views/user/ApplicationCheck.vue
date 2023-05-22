@@ -270,7 +270,7 @@ export default {
       let category = row.expense_category.split(" - ")
       this.applicationForm = {
         id: row.id,
-        fundNameAndId: fundName,
+        fund: fundName,
         group: row.groupName,
         money: row.expense,
         category: category,
