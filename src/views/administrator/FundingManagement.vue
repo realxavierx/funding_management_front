@@ -1,35 +1,37 @@
 <template>
   <div>
-    <h2 style="text-align: center">Funding Management</h2>
-    <el-radio-group v-model="showTable" @change="threeTableAPI">
-      <el-radio-button label="multiTotalTable">多项经费使用一览表</el-radio-button>
-      <el-radio-button label="multiDetailTable">经费授权明细一览表</el-radio-button>
-      <el-radio-button label="teacherDetailTable">经费汇总表</el-radio-button>
-    </el-radio-group>
-
-    <el-popover placement="top" :width="170" trigger="click">
-      <template #reference>
-        <el-button type="success" @click="exportData">导出表格</el-button>
-      </template>
-      <template #default>
-        <p>您确定要导出数据吗?</p>
-        <vue3-json-excel
-            :json-data="excelData"
-            :name="excelName"
-            :fields="excelFields"
-        >
-          <el-button style="margin-left: 50px" type="primary">确认</el-button>
-        </vue3-json-excel>
-      </template>
-    </el-popover>
-
+    <!--    <h2 style="text-align: center">Funding Management</h2>-->
+    <div style="text-align: center;margin-top: 10px;margin-bottom: 10px">
+      <el-radio-group v-model="showTable" @change="threeTableAPI">
+        <el-radio-button label="multiTotalTable">多项经费使用一览表</el-radio-button>
+        <el-radio-button label="multiDetailTable">经费授权明细一览表</el-radio-button>
+        <el-radio-button label="teacherDetailTable">经费汇总表</el-radio-button>
+      </el-radio-group>
+    </div>
+    <div style="text-align: center;margin-bottom: 10px">
+      <el-popover placement="top" :width="170" trigger="click">
+        <template #reference>
+          <el-button type="info" @click="exportData">导出表格</el-button>
+        </template>
+        <template #default>
+          <p>您确定要导出数据吗?</p>
+          <vue3-json-excel
+              :json-data="excelData"
+              :name="excelName"
+              :fields="excelFields"
+          >
+            <el-button style="margin-left: 50px" type="primary">确认</el-button>
+          </vue3-json-excel>
+        </template>
+      </el-popover>
+    </div>
     <div class="multi-total-table" v-if="showTable === 'multiTotalTable'">
       <!--      每个经费的使用情况 - 包含所有老师(系里)-->
       <div ref="multiTotalChartDom" id="multiTotalChart" style="width: 70%; height: 500px;margin:auto"></div>
       <div class="table">
         <el-button type="primary" @click="handleRefresh()">刷新金额</el-button>
         <el-table :data="multiTotalTableData" border style="margin-bottom:3%"
-                  :header-cell-style="{ background: '#69727a', color: '#fff', 'text-align': 'center' }"
+                  :header-cell-style="{ background: '#69727a', color: '#ffffff', 'text-align': 'center' }"
                   highlight-current-row>
           <el-table-column prop="code" label="经费编号"/>
           <el-table-column prop="fund_name" label="经费名称"/>
@@ -469,6 +471,7 @@ export default {
 .table {
   margin: auto;
   width: 80%;
+  text-align: right;
 }
 
 .multi-detail-table {

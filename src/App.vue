@@ -2,7 +2,6 @@
   <div id="app">
     <router-view></router-view>
   </div>
-
 </template>
 
 <script>
@@ -11,6 +10,31 @@ import {ElMessage} from "element-plus";
 
 export default {
   name: 'app',
+  created() {
+    window.addEventListener('beforeunload', this.handlePageClose);
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.handlePageClose);
+  },
+
+  methods: {
+    updateOnline(sid) {
+      this.$api.userAPI.updateOnline(sid, false).then(resp => {
+        if (resp.data.code === 200) {
+          ElMessage.info("您已退出登录！")
+        }
+      })
+    },
+
+    handlePageClose() {
+      let state = sessionStorage.getItem('state');
+      if (state !== null) {
+        let sid = JSON.parse(state).user.id;
+        this.updateOnline(sid);
+        sessionStorage.removeItem('state');
+      }
+    }
+  }
 }
 </script>
 <style>

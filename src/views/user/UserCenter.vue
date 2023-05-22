@@ -21,7 +21,6 @@
 
     <div class="base-info">
       <div class="base-info-head">基本信息</div>
-
       <div class="base-info-content">
         <el-descriptions size="large" border class="custom-descriptions">
           <el-descriptions-item label="Role:">{{ user.role }}</el-descriptions-item>
@@ -81,12 +80,17 @@
 
 <script>
 
-export default {
+import {ElMessage} from "element-plus";
 
+export default {
   data() {
     return {
-
-      user: {}
+      user: {},
+      email_input: "",
+      edit_email: false,
+      dialogVisible: false,
+      fileList: [],
+      newAvatar: ""
     }
   },
   methods: {
@@ -162,19 +166,9 @@ export default {
   margin-bottom: 10px;
   -webkit-box-shadow: 0 1px 8px 0 rgb(0 0 0 / 4%);
   box-shadow: 0 1px 8px 0 rgb(0 0 0 / 4%);
-}
-
-.general-info-avatar {
-  flex-shrink: 0;
-  position: relative;
-  width: 150px;
-  height: 150px;
-  margin-right: 16px;
-  -webkit-box-shadow: 0 0 10px 2px rgb(0 0 0 / 6%);
-  box-shadow: 0 0 10px 2px rgb(0 0 0 / 6%);
-  border: 2px solid #fff;
-  border-radius: 50%;
-  cursor: pointer;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }
 
 .general-info-avatar img {
@@ -212,5 +206,17 @@ export default {
   margin: 10px auto;
 }
 
+.custom-descriptions {
+  font-size: 20px;
+}
+
+.card-info {
+  font-family: 'Ma Shan Zheng', cursive;
+  font-size: 40px;
+  background-color: #ededea;
+  opacity: 1;
+  background: radial-gradient(circle, transparent 20%, #ededea 20%, #ededea 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, #ededea 20%, #ededea 80%, transparent 80%, transparent) 45px 45px, linear-gradient(#deb9eb 3.6px, transparent 3.6px) 0 -1.8px, linear-gradient(90deg, #deb9eb 3.6px, #ededea 3.6px) -1.8px 0;
+  background-size: 90px 90px, 90px 90px, 45px 45px, 45px 45px;
+}
 
 </style>

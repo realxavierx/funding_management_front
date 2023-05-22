@@ -1,9 +1,7 @@
 <!-- -1代表新加入的申请-->
 <template>
   <div class="application">
-    <div class="title">
-      报销申请表
-    </div>
+    <h2 style="text-align: center">Application for reimbursement</h2>
 
     <div class="roomForm">
       <el-form :model="applicationForm" ref="applicationFormRef" style="width: 100%" :rules="formRules">

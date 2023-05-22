@@ -17,14 +17,13 @@
           </template>
         </el-menu-item>
 
-        <el-menu-item index="/user/userCenter">个人中心</el-menu-item>
-
         <el-submenu index="" v-if="isLogin">
           <template v-slot:title>
             <i class="el-icon-user"></i>
             <span>{{ name }} &nbsp  </span>
             <span>{{ role }} &nbsp &nbsp </span>
           </template>
+          <el-menu-item index="/user/userCenter">个人中心</el-menu-item>
           <el-menu-item index="/" @click="logOut">退出登录</el-menu-item>
         </el-submenu>
         <el-menu-item index="/" v-if="!isLogin">登录</el-menu-item>
@@ -68,11 +67,6 @@ export default {
       this.isLogin = false;
       this.updateOnline();
       sessionStorage.removeItem('state')
-      this.$message({
-        showClose: true,
-        message: "您已退出登录",
-        type: "success"
-      });
     }
   },
   mounted() {

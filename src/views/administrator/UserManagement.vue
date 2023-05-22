@@ -169,4 +169,11 @@ export default {
 .user-table {
   margin-bottom: 4%
 }
+
+.users_card {
+  height: 250px;
+  width: 95%;
+  margin: auto auto 3% auto;
+  border-radius: 20px;
+}
 </style>

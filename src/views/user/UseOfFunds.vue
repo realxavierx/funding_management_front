@@ -1,11 +1,29 @@
 <template>
   <!--  <span>一个表展示该课题组的经费使用情况（余额、执行率等）</span>-->
   <div>
-    <h2>课题组经费使用情况</h2>
+    <div style="text-align: center;margin-top: 10px;margin-bottom: 10px">
+      <el-radio-group v-model="selectedGroup">
+        <el-radio-button v-for="group in user.groupName" :label="group" @change="groupChange"/>
+      </el-radio-group>
+    </div>
 
-    <el-radio-group v-model="selectedGroup">
-      <el-radio-button v-for="group in user.groupName" :label="group" @change="groupChange"/>
-    </el-radio-group>
+    <div style="text-align: center;margin-bottom: 10px">
+      <el-popover placement="top" :width="170" trigger="click">
+        <template #reference>
+          <el-button type="info" @click="exportData">导出表格</el-button>
+        </template>
+        <template #default>
+          <p>您确定要导出数据吗?</p>
+          <vue3-json-excel
+              :json-data="excelData"
+              :name="excelName"
+              :fields="excelFields"
+          >
+            <el-button style="margin-left: 50px" type="primary">确认</el-button>
+          </vue3-json-excel>
+        </template>
+      </el-popover>
+    </div>
 
     <div ref="useOfFundChartDom" id="useOfFundChart" style="width: 70%; height: 500px; margin:auto"></div>
 
@@ -48,6 +66,9 @@ export default {
       this.$api.userAPI.calculateExpenditureSummaryUser(this.selectedGroup).then(resp => {
         console.log(resp)
         _this.tableData = resp.data.data.funding_info;
+        for (const ele of _this.tableData) {
+          ele.days_left = Math.ceil((new Date(ele.due_date) - new Date()) / (1000 * 60 * 60 * 24));
+        }
         _this.visualizeChart();
       }).catch(err => {
         console.log(err);

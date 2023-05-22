@@ -106,7 +106,6 @@ export default {
         if (valid) {
           _this.$api.loginAPI.login(parseInt(this.loginForm.id), this.loginForm.password).then(resp => {
             console.log(resp)
-            console.log("111111111111")
             if (resp.data.code === 400 || resp.data.code === 300) {
               _this.$message({
                 showClose: true,

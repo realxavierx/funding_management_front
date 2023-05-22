@@ -154,13 +154,13 @@ const router = createRouter({
     routes
 })
 //登录拦截
-// router.beforeEach((to, from, next) => {
-//     const user = sessionStorage.getItem("user")
-//     if (to.name !== 'userLogin' && !user) {
-//         next({name: 'userLogin'})
-//     } else {
-//         next()
-//     }
-// })
+router.beforeEach((to, from, next) => {
+    const user = sessionStorage.getItem("state")
+    if (to.name !== 'userLogin' && to.name !== 'userSignIn' && to.name !== 'userSignUp' && to.name !== 'home' && !user) {
+        next({name: 'userLogin'})
+    } else {
+        next()
+    }
+})
 
 export default router

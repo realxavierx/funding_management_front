@@ -67,11 +67,6 @@ export default {
       this.isLogin = false
       this.updateOnline();
       sessionStorage.removeItem('state')
-      this.$message({
-        showClose: true,
-        message: "您已退出登录",
-        type: "success"
-      });
     }
   },
   mounted() {

@@ -144,6 +144,26 @@ export default {
     handlePass(row_index) {
       const _this = this
       this.$api.adminAPI.approvalApplication(parseInt(this.applicationData[row_index].id), this.passResult, this.passComment).then((resp) => {
+        console.log("11111111111111111")
+        /*
+        Approve successfully.
+        Refuse Automatically because the usable funding isn't enough.
+        Refuse Successfully.
+         */
+        console.log(resp)
+        if (resp.data.message === "Approve successfully.") {
+          _this.$message({
+            showClose: true,
+            message: resp.data.message,
+            type: 'success'
+          });
+        } else {
+          _this.$message({
+            showClose: true,
+            message: resp.data.message,
+            type: 'error'
+          });
+        }
         _this.getApplications()
       }).catch(err => {
         console.log(err);
