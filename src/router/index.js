@@ -156,10 +156,11 @@ const router = createRouter({
 //登录拦截
 router.beforeEach((to, from, next) => {
     const user = sessionStorage.getItem("state")
-    if (to.name !== 'userLogin' && to.name !== 'userSignIn' && to.name !== 'userSignUp' && to.name !== 'home' && !user) {
-        next({name: 'userLogin'})
+    const allowedRoutes = ['userLogin', 'userSignIn', 'userSignUp', 'home', 'resetPassword'];
+    if (!user && !allowedRoutes.includes(to.name)) {
+        next({name: 'userLogin'});
     } else {
-        next()
+        next();
     }
 })
 
