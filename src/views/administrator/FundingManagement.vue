@@ -149,6 +149,10 @@ export default {
         _this.$api.adminAPI.calculateFundingSum().then(resp => {
           console.log(resp)
           _this.multiTotalTableData = resp.data.data.funding_info;
+          for (const ele of _this.multiTotalTableData) {
+            ele.days_left = Math.ceil((new Date(ele.due_date) - new Date()) / (1000 * 60 * 60 * 24));
+            console.log(ele.days_left)
+          }
           _this.visualizeMultiTotalTable();
           _this.nowData = _this.multiTotalTableData;
         }).catch(err => {

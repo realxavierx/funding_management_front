@@ -20,8 +20,9 @@
     </div>
     <div style="flex-basis: 40%">
       <el-carousel height="500px">
-        <el-carousel-item v-for="(item,index) in img_list" :key="index">
-          <img :src="item" alt @click="handleCarouselClick(index)"/>
+        <el-carousel-item v-for="(item, index) in img_list" :key="index">
+          <h2 style="text-align: center">Contributor: {{ item.name }}</h2>
+          <img style="margin-left: 150px" :src="item.img"/>
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -42,14 +43,40 @@
 </template>
 
 <script>
+import img1 from "@/assets/dz.png";
+
 export default {
   name: "AdminHomePage",
   data() {
-    const img1 = require("../../assets/bigstar.png");
-    const img2 = require("../../assets/haimian.png");
-    const img3 = require("../../assets/sandy.png");
+    const img1 = require("../../assets/dz.png");
+    const img2 = require("../../assets/lsm.png");
+    const img3 = require("../../assets/fdz.png");
+    const img4 = require("../../assets/xyw.png");
+    const img5 = require("../../assets/siri.png");
+
     return {
-      img_list: [img1, img2, img3],
+      img_list: [
+        {
+          name: "Ding Zhe",
+          img: img1
+        },
+        {
+          name: "Luo Shimin",
+          img: img2
+        },
+        {
+          name: "Feng Dazhi",
+          img: img3
+        },
+        {
+          name: "Xiao Yuwei",
+          img: img4
+        },
+        {
+          name: "Li Sirui",
+          img: img5
+        }
+      ],
       user: {},
       nameText: "",
       roleText: "",
@@ -76,6 +103,13 @@ export default {
   methods: {
     getAllOnlineUsers() {
       const _this = this;
+      _this.$api.userAPI.getOnlineUsers().then(resp => {
+        _this.onlineUsers = resp.data.data.online_users
+        console.log(resp);
+      }).catch(err => {
+        console.log(err);
+      });
+
       setInterval(() => {
         _this.$api.userAPI.getOnlineUsers().then(resp => {
           _this.onlineUsers = resp.data.data.online_users
@@ -96,6 +130,7 @@ export default {
       textToType.push(roleString);
 
       let functionString = "你可以使用的功能有：\n\n"
+          + "· 分配经费\n\n"
           + "· 查看并管理用户的报销权限\n\n"
           + "· 查看并管理课题组\n\n"
           + "· 查看并管理经费\n\n"

@@ -24,8 +24,9 @@
     </div>
     <div style="flex-basis: 40%">
       <el-carousel height="500px">
-        <el-carousel-item v-for="(item,index) in img_list" :key="index">
-          <img :src="item" alt @click="handleCarouselClick(index)"/>
+        <el-carousel-item v-for="(item, index) in img_list" :key="index">
+          <h2 style="text-align: center">Contributor: {{ item.name }}</h2>
+          <img style="margin-left: 150px" :src="item.img"/>
         </el-carousel-item>
       </el-carousel>
     </div>
@@ -46,15 +47,45 @@
 </template>
 
 <script>
+import img1 from "@/assets/dz.png";
+import img2 from "@/assets/lsm.png";
+import img3 from "@/assets/fdz.png";
+import img4 from "@/assets/xyw.png";
+import img5 from "@/assets/siri.png";
+
 export default {
   name: "UserHomePage",
 
   data() {
-    const img1 = require("../../assets/bigstar.png");
-    const img2 = require("../../assets/haimian.png");
-    const img3 = require("../../assets/sandy.png");
+    const img1 = require("../../assets/dz.png");
+    const img2 = require("../../assets/lsm.png");
+    const img3 = require("../../assets/fdz.png");
+    const img4 = require("../../assets/xyw.png");
+    const img5 = require("../../assets/siri.png");
+
     return {
-      img_list: [img1, img2, img3],
+      img_list: [
+        {
+          name: "Ding Zhe",
+          img: img1
+        },
+        {
+          name: "Luo Shimin",
+          img: img2
+        },
+        {
+          name: "Feng Dazhi",
+          img: img3
+        },
+        {
+          name: "Xiao Yuwei",
+          img: img4
+        },
+        {
+          name: "Li Sirui",
+          img: img5
+        }
+      ],
       user: {},
       nameText: "",
       roleText: "",
@@ -74,13 +105,22 @@ export default {
 
   methods: {
     getAllOnlineUsers() {
-      const _this = this
-      this.$api.userAPI.getOnlineUsers().then(resp => {
+      let _this = this;
+      _this.$api.userAPI.getOnlineUsers().then(resp => {
         _this.onlineUsers = resp.data.data.online_users
         console.log(resp);
       }).catch(err => {
         console.log(err);
       });
+
+      setInterval(() => {
+        _this.$api.userAPI.getOnlineUsers().then(resp => {
+          _this.onlineUsers = resp.data.data.online_users
+          console.log(resp);
+        }).catch(err => {
+          console.log(err);
+        })
+      }, 10000);
     },
     handleCarouselClick(index) {
       if (index === 0) {
@@ -110,13 +150,15 @@ export default {
             + "1. 申请报销\n\n"
             + "2. 查看课题组信息\n\n"
             + "3. 查看并管理经费\n\n"
-            + "4. 查看报销申请\n\n";
+            + "4. 查看报销申请\n\n"
+            + "5. 查看并修改个人信息\n\n";
       } else if (this.user.status === "blocked") {
         statusString += "你现在能够使用的功能有：\n\n"
             + "1. 查看课题组信息\n\n"
             + "2. 查看并管理经费\n\n"
             + "3. 查看报销申请\n\n"
-            + "但你无法申请报销。";
+            + "4. 查看并修改个人信息\n\n";
+            + "但你无法申请报销。\n\n";
       }
       textToType.push(statusString);
 

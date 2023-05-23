@@ -138,11 +138,13 @@ export default {
     },
 
     resetForm() {
-      this.allocateForm = {
-        fund: "",
-        group: "",
-        money: 0,
-      };
+      // this.allocateForm = {
+      //   fund: "",
+      //   group: "",
+      //   money: 0,
+      // };
+      this.allocateForm.group = "";
+      this.allocateForm.money = 0;
     },
 
     handleAllocate() {
