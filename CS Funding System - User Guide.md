@@ -8,6 +8,10 @@ Developers of CS Funding System:
 
 :man:[Yuwei Xiao](https://github.com/Xavier-Shaw), :woman:[Zhe Ding](https://github.com/DingZ0115), :woman:[Shimin Luo](https://github.com/FffffeiXIN), :man:[Sirui Lee](https://github.com/Siri-Lee), :man:[Dazhi FENG](https://github.com/dazhi0619)
 
+---
+
+This document provides guidance and instructions for users of the CS Funding System, it aims to empower users with the knowledge and understanding necessary to navigate and utilize the CS Funding System. It also serves as a comprehensive guide to assist users in effectively managing funds and reimbursements.
+
 ### Contents
 
 This User Guide includes: 

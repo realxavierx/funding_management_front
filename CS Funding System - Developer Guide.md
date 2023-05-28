@@ -10,6 +10,10 @@ Developers of CS Funding System:
 
 :man:[Yuwei Xiao](https://github.com/Xavier-Shaw), :woman:[Zhe Ding](https://github.com/DingZ0115), :woman:[Shimin Luo](https://github.com/FffffeiXIN), :man:[Sirui Lee](https://github.com/Siri-Lee), :man:[Dazhi FENG](https://github.com/dazhi0619)
 
+---
+
+This documentation provides essential information and guidelines for developers working on the CS Funding System, it aims to assist developers in understanding the CS Funding System's technical aspects, enabling them to efficiently contribute to its development, maintenance, and enhancement. It also serves as a comprehensive reference guide to facilitate smooth collaboration and ensure the stability and scalability of the system.
+
 ### Contents
 
 This Developer Guide includes: 
